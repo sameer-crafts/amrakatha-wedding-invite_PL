@@ -196,25 +196,24 @@
   .title-word:nth-of-type(3) { transition-delay: 320ms; }
   .title-word.title-word-in { opacity: 1; transform: translateY(0); }
 
-  /* ---------- RSVP: mango-seal draw-in on submit ----------
-     Untouched this pass — not in scope for the depth-of-field rework.
-     Paths are inlined directly (same approach the timeline icons already
-     use) rather than <use href="#leaf-mango">: <use> clones its target into
-     a shadow tree, and while inherited properties do reach through that
-     boundary, relying on a transition of stroke-dashoffset doing so
-     consistently across browsers isn't worth the risk for the RSVP's one
-     closing moment. pathLength="1" normalizes both paths to a 0–1 range so
-     no manual path-length measurement is needed. */
-  .mango-seal path {
+  /* ---------- RSVP: leaf-seal draw-in on submit ----------
+     Paths are inlined directly (silhouette borrowed from #leaf-drift, traced
+     as an open stroke) rather than <use href="#leaf-drift">: <use> clones
+     its target into a shadow tree, and while inherited properties do reach
+     through that boundary, relying on a transition of stroke-dashoffset
+     doing so consistently across browsers isn't worth the risk for the
+     RSVP's one closing moment. pathLength="1" normalizes both paths to a
+     0–1 range so no manual path-length measurement is needed. */
+  .leaf-seal path {
     stroke-dasharray: 1;
     stroke-dashoffset: 1;
     transition: stroke-dashoffset 900ms cubic-bezier(0.16,1,0.3,1);
   }
-  .mango-seal path:nth-of-type(2) { transition-delay: 550ms; }
-  .mango-seal.is-drawn path { stroke-dashoffset: 0; }
+  .leaf-seal path:nth-of-type(2) { transition-delay: 550ms; }
+  .leaf-seal.is-drawn path { stroke-dashoffset: 0; }
 
   @media (prefers-reduced-motion: reduce) {
-    #gate, .title-word, .hero-img, .mango-seal path { transition-duration: 1ms !important; }
+    #gate, .title-word, .hero-img, .leaf-seal path { transition-duration: 1ms !important; }
   }
 
   /* ---------- 'Physical photograph' parallax: story timeline image frames ----------
@@ -652,7 +651,7 @@
             Change selection
           </button>
           <p class="text-gold text-[11px] tracking-[0.3em] uppercase mb-2">Joining From</p>
-          <p id="chosenSideLabel" class="devnag-plain text-3xl md:text-4xl text-forest"></p>
+          <p id="chosenSideLabel" class="devnag text-3xl md:text-4xl text-forest"></p>
         </div>
 
         <form id="rsvpForm" action="#" novalidate>
@@ -729,9 +728,9 @@
         </form>
 
         <div id="rsvpThanks" class="hidden text-center py-6">
-          <svg id="mangoSeal" class="mango-seal w-14 h-auto text-gold mx-auto mb-4" viewBox="0 0 100 140" fill="none" aria-hidden="true">
-            <path pathLength="1" d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
-            <path pathLength="1" d="M48 8 C45 2,39 0,33 3" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <svg id="leafSeal" class="leaf-seal w-8 h-auto text-gold mx-auto mb-4" viewBox="0 0 30 70" fill="none" aria-hidden="true">
+            <path pathLength="1" d="M15 2 C25 9,28 24,23 39 C20 50,21 60,15 68 C10 59,8 49,7 38 C5 23,7 9,15 2 Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path pathLength="1" d="M15 7 C18 20,19 39,15 64" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
           </svg>
           <p class="font-serif text-xl text-forest mb-1">Thank you!</p>
           <p class="devnag text-forest-muted text-sm">तुमचा प्रतिसाद आम्हाला मिळाला.</p>
@@ -1056,10 +1055,14 @@
     if (!card || !choicePanel || !formPanel || !guestSide) return;
 
     const TRANSITION_MS = 500;
+    // "Joining From" now shows the family surname rather than the raw
+    // वरपक्ष/वधूपक्ष side label — guestSide.value (the submitted form field)
+    // is untouched, only the on-screen label text changes.
+    const FAMILY_LABEL = { 'वरपक्ष': 'मोडक कुटुंबीय', 'वधूपक्ष': 'केतकर कुटुंबीय' };
 
     function chooseSide(side, accentClass) {
       guestSide.value = side;
-      if (chosenSideLabel) chosenSideLabel.textContent = side;
+      if (chosenSideLabel) chosenSideLabel.textContent = FAMILY_LABEL[side] || side;
       card.classList.remove('side-accent-var', 'side-accent-vadhu');
       card.classList.add(accentClass);
 
@@ -1146,21 +1149,21 @@
   (function () {
     const form = document.getElementById('rsvpForm');
     const thanks = document.getElementById('rsvpThanks');
-    const mangoSeal = document.getElementById('mangoSeal');
+    const leafSeal = document.getElementById('leafSeal');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
       form.classList.add('hidden');
       thanks.classList.remove('hidden');
 
-      if (mangoSeal) {
-        void mangoSeal.offsetWidth; // force reflow so the stroke-draw transition actually plays
+      if (leafSeal) {
+        void leafSeal.offsetWidth; // force reflow so the stroke-draw transition actually plays
         setTimeout(function () {
-          mangoSeal.classList.add('is-drawn');
-          // Soft double-pulse, like a wax seal pressed and released — not a
-          // notification buzz. Feature-detected: navigator.vibrate doesn't
-          // exist on iOS Safari at all, so this is a silent no-op there and
-          // on any other unsupported browser.
+          leafSeal.classList.add('is-drawn');
+          // Soft double-pulse, timed to the leaf's draw-in — a gentle
+          // confirmation, not a notification buzz. Feature-detected:
+          // navigator.vibrate doesn't exist on iOS Safari at all, so this
+          // is a silent no-op there and on any other unsupported browser.
           if ('vibrate' in navigator) { navigator.vibrate([12, 30, 18]); }
         }, 120);
       }
