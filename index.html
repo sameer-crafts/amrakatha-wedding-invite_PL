@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sameer &amp; Nivedita — आम्रकथा</title>
+<link rel="icon" type="image/png" href="logo.png">
+
+<!-- Fonts: Playfair Display + Inter for the brief's spec. Noto Sans Devanagari / Tiro Devanagari Marathi stay loaded as safety-net fallbacks behind the custom PuLaFont (see @font-face below). Yatra One is added specifically as the artifact-preview stand-in for PuLaFont: it's a Google-hosted display face with real Devanagari coverage (Caveat has none — it would silently drop out of the font-matching chain for Marathi glyphs and defeat the point of a preview fallback). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600&family=Tiro+Devanagari+Marathi&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          forest: { DEFAULT: '#1E3A2B', deep: '#12241A', muted: '#4E6659' },
+          parchment: { DEFAULT: '#FBF9F4', warm: '#F3EDDC' },
+          gold: { DEFAULT: '#E5A93C', deep: '#B07E23', soft: '#F0C877' },
+        },
+        fontFamily: {
+          serif: ['"Playfair Display"', 'serif'],
+          sans: ['"Inter"', 'sans-serif'],
+          dn: ['"Noto Sans Devanagari"', 'sans-serif'],
+          dnserif: ['"Tiro Devanagari Marathi"', 'serif'],
+        },
+        boxShadow: {
+          soft: '0 25px 60px -20px rgba(30,58,43,0.30)',
+          softsm: '0 12px 30px -12px rgba(30,58,43,0.25)',
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #1E3A2B; }
+
+  /* Reveal-on-scroll base state; JS toggles .in-view */
+  .reveal { opacity: 0; transform: translateY(2rem); transition: opacity 1000ms cubic-bezier(0.16,1,0.3,1), transform 1000ms cubic-bezier(0.16,1,0.3,1); }
+  .reveal.in-view { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition-duration: 1ms !important; }
+    * { animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
+  }
+
+  /* Frosted glass surfaces on the parchment background */
+  .glass {
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(229,169,60,0.28);
+  }
+
+  /* Password gate error shake */
+  @keyframes shake {
+    10%,90% { transform: translateX(-1px); }
+    20%,80% { transform: translateX(2px); }
+    30%,50%,70% { transform: translateX(-5px); }
+    40%,60% { transform: translateX(5px); }
+  }
+  .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+
+  /* Gentle scroll-cue pulse (deliberately not a bounce) */
+  @keyframes softpulse { 0%,100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 0.9; transform: translateY(6px); } }
+  .softpulse { animation: softpulse 2.6s ease-in-out infinite; }
+
+  /* Custom scrollbar, subtle */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #FBF9F4; }
+  ::-webkit-scrollbar-thumb { background: #E5A93C; border-radius: 999px; }
+
+  /* Custom brand font for Marathi. PuLaFont.ttf is a local file — it will not
+     resolve inside this sandboxed artifact preview (same constraint as the
+     jpg/png assets), only once deployed with the .ttf sitting alongside this
+     HTML. Yatra One is the real stand-in for the preview: unlike a Latin-only
+     cursive face, it actually has Devanagari glyphs, so the "handwritten"
+     character is visible today rather than silently falling through to a
+     generic system font. Noto Sans Devanagari is kept as a last-resort net. */
+  @font-face {
+    font-family: 'PuLaFont';
+    src: url('PuLaFont.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  .devnag { font-family: 'PuLaFont', 'Yatra One', '"Noto Sans Devanagari"', sans-serif; }
+
+  /* Elegant, traditional printed-book Devanagari — deliberately NOT the
+     stylized brand font. Used only for the two 'आम्रकथा' spots on the
+     gate and hero eyebrow. Tiro Devanagari Marathi is already loaded above. */
+  .devnag-plain { font-family: '"Tiro Devanagari Marathi"', '"Noto Sans Devanagari"', serif; }
+
+  /* Gate unlock button — slow continuous "breathing" glow, paused for reduced-motion via the global rule above */
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(229,169,60,0); transform: scale(1); }
+    50% { box-shadow: 0 0 24px 5px rgba(229,169,60,0.45); transform: scale(1.015); }
+  }
+  .btn-breathe { animation: breathe 3.2s ease-in-out infinite; }
+
+  /* Visible keyboard focus ring, gold */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid #E5A93C; outline-offset: 3px;
+  }
+
+  /* ---------- Gate: large drifting-and-swaying leaves (pure CSS) ---------- */
+  .leaf-fall {
+    position: absolute;
+    top: -14%;
+    opacity: 0;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+  }
+  .leaf-fall.sway-a { animation-name: leafDriftA; }
+  .leaf-fall.sway-b { animation-name: leafDriftB; }
+  @keyframes leafDriftA {
+    0%   { transform: translate(0, 0) rotate(-10deg);          opacity: 0; }
+    10%  { opacity: 0.3; }
+    25%  { transform: translate(34px, 16vh) rotate(9deg); }
+    50%  { transform: translate(-28px, 45vh) rotate(-8deg);    opacity: 0.3; }
+    75%  { transform: translate(30px, 76vh) rotate(10deg); }
+    90%  { opacity: 0.28; }
+    100% { transform: translate(-16px, 116vh) rotate(-6deg);   opacity: 0; }
+  }
+  @keyframes leafDriftB {
+    0%   { transform: translate(0, 0) rotate(8deg);            opacity: 0; }
+    10%  { opacity: 0.3; }
+    25%  { transform: translate(-30px, 18vh) rotate(-9deg); }
+    50%  { transform: translate(26px, 48vh) rotate(7deg);      opacity: 0.28; }
+    75%  { transform: translate(-32px, 78vh) rotate(-10deg); }
+    90%  { opacity: 0.26; }
+    100% { transform: translate(18px, 117vh) rotate(6deg);     opacity: 0; }
+  }
+  /* ---------- Embossed green background leaves ---------- */
+  .leaf-embossed {
+    filter: drop-shadow(2px 3px 2px rgba(30,58,43,0.30)) drop-shadow(-1px -1px 1px rgba(255,255,255,0.6));
+  }
+
+  /* ---------- Highly detailed tropical leaves, timeline background ---------- */
+  .leaf-tropical {
+    filter: drop-shadow(4px 6px 6px rgba(0,0,0,0.3));
+  }
+  /* ---------- RSVP side-choice accent ---------- */
+  #rsvpCard {
+    outline: 2px solid transparent;
+    outline-offset: 6px;
+    transition: outline-color 700ms ease;
+  }
+  #rsvpCard.side-accent-var { outline-color: rgba(18,36,26,0.35); }
+  #rsvpCard.side-accent-vadhu { outline-color: rgba(229,169,60,0.5); }
+
+  /* ---------- Gate exit: depth-of-field unlock ----------
+     Sequence (exact timings live in unlockGate(), not here): the
+     interactive content fades fast; the dark background + falling leaves
+     are deliberately left alone to linger; then the gate dissolves while
+     the hero image beneath pulls out of a heavy blur into focus. */
+  .gate-content { transition: opacity 500ms ease-out; }
+
+  /* ---------- Hero: focus-pull, triggered on unlock ----------
+     Deliberately a transition + JS-toggled class, NOT a @keyframes
+     animation that autoplays on page load. The gate can sit open for an
+     arbitrary length of time while a guest types the password; a
+     fire-and-forget animation would already be sitting at its finished
+     (sharp) state — invisible behind the gate — long before it's actually
+     revealed. Toggling .hero-img-focused at the right moment in
+     unlockGate() means the 3s pull only starts counting once it can
+     actually be seen. */
+  .hero-img {
+    filter: blur(20px);
+    transition: filter 3000ms ease-out;
+    will-change: filter;
+  }
+  .hero-img.hero-img-focused { filter: blur(0px); }
+
+  /* ---------- Hero title: word-by-word float-in, triggered on unlock ----------
+     Independent of the .reveal/IntersectionObserver system on purpose: that
+     observer indexes every .reveal element in document order to alternate a
+     0/150ms delay, so splitting the h1 into more .reveal items would shift
+     every downstream timeline item's stagger by one position. This uses its
+     own transition + class instead, fired directly from unlockGate(). */
+  .title-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.6em);
+    transition: opacity 1100ms cubic-bezier(0.16,1,0.3,1), transform 1100ms cubic-bezier(0.16,1,0.3,1);
+  }
+  .title-word:nth-of-type(1) { transition-delay: 0ms; }
+  .title-word:nth-of-type(2) { transition-delay: 180ms; }
+  .title-word:nth-of-type(3) { transition-delay: 320ms; }
+  .title-word.title-word-in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- RSVP: mango-seal draw-in on submit ----------
+     Untouched this pass — not in scope for the depth-of-field rework.
+     Paths are inlined directly (same approach the timeline icons already
+     use) rather than <use href="#leaf-mango">: <use> clones its target into
+     a shadow tree, and while inherited properties do reach through that
+     boundary, relying on a transition of stroke-dashoffset doing so
+     consistently across browsers isn't worth the risk for the RSVP's one
+     closing moment. pathLength="1" normalizes both paths to a 0–1 range so
+     no manual path-length measurement is needed. */
+  .mango-seal path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 900ms cubic-bezier(0.16,1,0.3,1);
+  }
+  .mango-seal path:nth-of-type(2) { transition-delay: 550ms; }
+  .mango-seal.is-drawn path { stroke-dashoffset: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #gate, .title-word, .hero-img, .mango-seal path { transition-duration: 1ms !important; }
+  }
+
+  /* ---------- 'Physical photograph' parallax: story timeline image frames ----------
+     Transform is applied to this inner frame div, not the outer .reveal
+     wrapper each image sits in — the outer div's transform is already owned
+     by the .reveal/.in-view entrance system (translateY(2rem) -> 0, fired
+     once by the existing IntersectionObserver). Driving a second, continuous
+     scroll-linked transform on that same element would fight the entrance
+     animation's own transform value. This inner div carries no .reveal
+     class, so the two systems never touch the same property on the same
+     element. No transition here on purpose — the JS below sets translateY
+     directly per scroll frame, and a lagging CSS transition would read as
+     swimmy rather than tightly tied to scroll position. */
+  .parallax-photo { will-change: transform; }
+</style>
+</head>
+
+<body class="bg-forest font-sans text-forest antialiased overflow-x-hidden selection:bg-gold/30 selection:text-forest">
+
+<!-- Global SVG symbol library — reused leaf / botanical line-art motifs -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- clean, distinct leaf silhouette used for the gate's large drifting-leaf animation -->
+    <symbol id="leaf-drift" viewBox="0 0 30 70">
+      <path d="M15 2 C25 9,28 24,23 39 C20 50,21 60,15 68 C10 59,8 49,7 38 C5 23,7 9,15 2 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
+      <path d="M15 7 C18 20,19 39,15 64" stroke="#1E3A2B" stroke-opacity="0.3" stroke-width="0.8" fill="none"/>
+    </symbol>
+    <!-- banana leaf, single broad blade — for the embossed background scatter -->
+    <symbol id="leaf-banana" viewBox="0 0 50 90">
+      <path d="M25 4 C39 12,43 38,37 60 C33 76,28 85,25 88 C22 85,17 76,13 60 C7 38,11 12,25 4 Z" fill="currentColor"/>
+      <path d="M25 10 C24 34,24 58,25 82" stroke="#1E3A2B" stroke-opacity="0.25" stroke-width="1" fill="none"/>
+      <path d="M25 20 L14 30 M25 20 L36 30" stroke="#1E3A2B" stroke-opacity="0.2" stroke-width="0.8" fill="none"/>
+      <path d="M25 36 L12 48 M25 36 L38 48" stroke="#1E3A2B" stroke-opacity="0.2" stroke-width="0.8" fill="none"/>
+      <path d="M25 54 L15 64 M25 54 L35 64" stroke="#1E3A2B" stroke-opacity="0.2" stroke-width="0.8" fill="none"/>
+    </symbol>
+    <!-- coconut-palm frond, compound leaflets — for the embossed background scatter -->
+    <symbol id="leaf-coconut" viewBox="0 0 70 100">
+      <path d="M35 96 C34 70,33 40,34 4" stroke="currentColor" stroke-width="2" fill="none"/>
+      <ellipse cx="28.9" cy="84.7" rx="7.5" ry="2.6" transform="rotate(-55 28.9 84.7)" fill="currentColor"/>
+      <ellipse cx="41.1" cy="84.7" rx="7.5" ry="2.6" transform="rotate(55 41.1 84.7)" fill="currentColor"/>
+      <ellipse cx="29.5" cy="72.8" rx="6.8" ry="2.4" transform="rotate(-53 29.5 72.8)" fill="currentColor"/>
+      <ellipse cx="40.5" cy="72.8" rx="6.8" ry="2.4" transform="rotate(53 40.5 72.8)" fill="currentColor"/>
+      <ellipse cx="30.2" cy="59.9" rx="6.1" ry="2.3" transform="rotate(-52 30.2 59.9)" fill="currentColor"/>
+      <ellipse cx="39.8" cy="59.9" rx="6.1" ry="2.3" transform="rotate(52 39.8 59.9)" fill="currentColor"/>
+      <ellipse cx="30.8" cy="47.0" rx="5.4" ry="2.1" transform="rotate(-50 30.8 47.0)" fill="currentColor"/>
+      <ellipse cx="39.2" cy="47.0" rx="5.4" ry="2.1" transform="rotate(50 39.2 47.0)" fill="currentColor"/>
+      <ellipse cx="31.5" cy="34.1" rx="4.8" ry="1.9" transform="rotate(-48 31.5 34.1)" fill="currentColor"/>
+      <ellipse cx="38.5" cy="34.1" rx="4.8" ry="1.9" transform="rotate(48 38.5 34.1)" fill="currentColor"/>
+      <ellipse cx="32.0" cy="22.2" rx="4.1" ry="1.8" transform="rotate(-47 32.0 22.2)" fill="currentColor"/>
+      <ellipse cx="38.0" cy="22.2" rx="4.1" ry="1.8" transform="rotate(47 38.0 22.2)" fill="currentColor"/>
+      <ellipse cx="32.6" cy="12.3" rx="3.4" ry="1.6" transform="rotate(-45 32.6 12.3)" fill="currentColor"/>
+      <ellipse cx="37.4" cy="12.3" rx="3.4" ry="1.6" transform="rotate(45 37.4 12.3)" fill="currentColor"/>
+    </symbol>
+    <!-- fan palm, radiating pleated segments — for the embossed background scatter -->
+    <symbol id="leaf-fanpalm" viewBox="0 0 80 66">
+      <line x1="40" y1="64" x2="1.9" y2="46.3" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="11.4" y2="33.3" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="24.9" y2="24.8" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="40.0" y2="22.0" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="55.1" y2="24.8" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="68.6" y2="33.3" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      <line x1="40" y1="64" x2="78.1" y2="46.3" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+    </symbol>
+    <!-- tropical leaf paths for the timeline background — Banana + fan Palm only -->
+    <symbol id="tropical-banana" viewBox="0 0 66 192">
+      <path d="M30 186 C8 165,2 130,6 95 C10 55,18 20,32 6 C46 20,56 55,60 95 C64 130,56 165,32 186 Z" fill="currentColor"/>
+      <path d="M30 182 C29 150,33 100,35 60 C36 35,33 15,32 6" fill="none" stroke="#12241A" stroke-opacity="0.3" stroke-width="1.4"/>
+      <path d="M30.0 170.0 Q22.0 157.7 14.0 153.5 M30.0 170.0 Q38.0 157.7 46.0 153.5 M32.6 148.6 Q25.1 137.0 17.6 133.4 M32.6 148.6 Q40.1 137.0 47.6 133.4 M34.7 127.1 Q27.7 116.3 20.7 113.4 M34.7 127.1 Q41.7 116.3 48.6 113.4 M35.8 105.7 Q29.4 95.5 23.0 93.3 M35.8 105.7 Q42.3 95.5 48.7 93.3 M35.8 84.3 Q30.0 74.7 24.1 73.2 M35.8 84.3 Q41.7 74.7 47.6 73.2 M34.7 62.9 Q29.4 54.0 24.1 53.1 M34.7 62.9 Q40.0 54.0 45.3 53.1 M32.6 41.4 Q27.9 33.2 23.2 33.0 M32.6 41.4 Q37.3 33.2 42.0 33.0 M30.0 20.0 Q25.9 12.4 21.9 12.9 M30.0 20.0 Q34.1 12.4 38.1 12.9" fill="none" stroke="#12241A" stroke-opacity="0.22" stroke-width="1"/>
+    </symbol>
+    <symbol id="leaf-mango" viewBox="0 0 100 140">
+      <path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z" fill="none" stroke="currentColor" stroke-width="6"/>
+      <path d="M48 8 C45 2,39 0,33 3" fill="none" stroke="currentColor" stroke-width="6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- =================== PASSWORD GATE =================== -->
+<div id="gate" class="fixed inset-0 h-[100dvh] z-[100] overflow-hidden bg-[radial-gradient(circle_at_50%_38%,#335840_0%,#1E3A2B_55%,#122219_100%)] flex items-center justify-center px-6 transition-opacity duration-[2000ms] ease-out">
+
+  <!-- drifting leaves — pure CSS, large & clearly visible, calm and slow -->
+  <div id="leaves-container" class="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+    <svg class="leaf-fall sway-a w-12 h-12" style="left:2%;  color:#F0C877; animation-duration:24s; animation-delay:-3s;"  viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-b w-12 h-12" style="left:16%; color:#8FB89A; animation-duration:19s; animation-delay:-11s;" viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-a w-12 h-12" style="left:32%; color:#8FB89A; animation-duration:26s; animation-delay:-6s;"  viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-b w-12 h-12" style="left:48%; color:#F0C877; animation-duration:21s; animation-delay:-16s;" viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-a w-12 h-12" style="left:63%; color:#8FB89A; animation-duration:23s; animation-delay:-2s;"  viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-b w-12 h-12" style="left:79%; color:#F0C877; animation-duration:20s; animation-delay:-9s;"  viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+    <svg class="leaf-fall sway-a w-12 h-12" style="left:90%; color:#8FB89A; animation-duration:25s; animation-delay:-14s;" viewBox="0 0 30 70"><use href="#leaf-drift"/></svg>
+  </div>
+
+  <!-- faint mango corner motifs -->
+  <svg class="gate-content absolute -top-10 -left-10 w-64 h-64 text-gold/10" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.2">
+    <path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/>
+    <path d="M48 8 C45 2,39 0,33 3"/>
+  </svg>
+  <svg class="gate-content absolute -bottom-14 -right-10 w-72 h-72 text-gold/10 rotate-180" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.2">
+    <path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/>
+  </svg>
+
+  <div class="gate-content relative w-full max-w-sm">
+    <div class="relative text-center bg-white/[0.045] backdrop-blur-md border border-gold/25 rounded-2xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] px-8 py-12 sm:px-10 sm:py-14">
+
+      <!-- delicate top ornament -->
+      <svg class="mx-auto w-24 h-4 text-gold/40 mb-7" viewBox="0 0 100 16" fill="none" stroke="currentColor" stroke-width="1">
+        <line x1="0" y1="8" x2="38" y2="8"/>
+        <path d="M50 2 C55 2 59 6 59 8 C59 10 55 14 50 14 C45 14 41 10 41 8 C41 6 45 2 50 2 Z"/>
+        <line x1="62" y1="8" x2="100" y2="8"/>
+      </svg>
+
+      <p class="devnag-plain text-gold text-lg tracking-wide mb-2">आम्रकथा</p>
+      <h1 class="font-serif text-3xl sm:text-4xl text-parchment mb-6">Sameer &amp; Nivedita</h1>
+      <p class="text-parchment/60 text-sm mb-8 leading-relaxed">This invitation is just for you.<br>Enter the password to continue.</p>
+
+      <form id="gateForm" novalidate>
+        <input
+          id="gatePassword"
+          type="password"
+          autocomplete="off"
+          placeholder="Password"
+          aria-label="Password"
+          class="w-full bg-transparent border-0 border-b border-gold/40 text-parchment placeholder-parchment/25 text-center tracking-[0.25em] text-sm py-3 focus:outline-none focus:border-gold focus:shadow-[0_6px_24px_-6px_rgba(229,169,60,0.6)] transition-all duration-500"
+        >
+        <p id="gateError" class="hidden text-gold-soft text-xs mt-3 tracking-wide">That's not quite it — please try again.</p>
+        <button id="gateUnlockBtn" type="button" class="btn-breathe mt-8 inline-flex items-center gap-2 text-gold border border-gold/60 hover:bg-gold hover:text-forest transition-colors duration-300 rounded-full px-8 py-3 text-xs tracking-[0.2em] uppercase">
+          Unlock <span aria-hidden="true">&rarr;</span>
+        </button>
+      </form>
+
+      <!-- delicate bottom ornament -->
+      <svg class="mx-auto w-24 h-4 text-gold/40 mt-10" viewBox="0 0 100 16" fill="none" stroke="currentColor" stroke-width="1">
+        <line x1="0" y1="8" x2="38" y2="8"/>
+        <path d="M50 2 C55 2 59 6 59 8 C59 10 55 14 50 14 C45 14 41 10 41 8 C41 6 45 2 50 2 Z"/>
+        <line x1="62" y1="8" x2="100" y2="8"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- background music: playback started from the gate's unlock success handler -->
+<audio id="bg-music" loop src="music.mp3"></audio>
+
+<!-- floating audio toggle — hidden on the password page, fades in with the unlocked site -->
+<button id="audioToggle" type="button" aria-label="Play background music" aria-pressed="false"
+  class="glass fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full shadow-softsm flex items-center justify-center opacity-0 pointer-events-none transition-all duration-500 ease-out hover:shadow-soft">
+  <svg id="iconSoundOn" class="w-4 h-4 text-forest" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 9.5v5h3.2l4.6 3.6V5.9L7.7 9.5H4.5Z"/>
+    <path d="M15.8 9a4 4 0 010 6"/>
+    <path d="M18.2 6.6a7.5 7.5 0 010 10.8"/>
+  </svg>
+  <svg id="iconSoundOff" class="w-4 h-4 text-forest hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 9.5v5h3.2l4.6 3.6V5.9L7.7 9.5H4.5Z"/>
+    <path d="M15.5 9.8l4.4 4.4M19.9 9.8l-4.4 4.4"/>
+  </svg>
+</button>
+
+<!-- persistent, color-adaptive scroll indicator — fixed at body level (not
+     inside #hero, which is overflow-hidden and would clip a fixed child the
+     moment the section scrolls out of the viewport). text-white +
+     mix-blend-difference auto-inverts against whatever's behind it: near-
+     black over parchment, a bright differenced tone over the dark forest
+     sections. Sits below #gate (z-100) in stacking order, so it's already
+     hidden while the gate is up without any extra JS. Outer strip is
+     pointer-events-none so it never blocks clicks/scroll across the full
+     width; the link itself opts back in. -->
+<div id="scrollCue" class="fixed bottom-6 inset-x-0 z-40 flex justify-center text-white mix-blend-difference pointer-events-none transition-opacity duration-700 ease-out">
+  <a href="#story" id="scrollCueLink" class="softpulse pointer-events-auto flex flex-col items-center" aria-label="Scroll to our story">
+    <span class="text-[10px] tracking-[0.3em] uppercase mb-2">Scroll</span>
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
+  </a>
+</div>
+
+<!-- scroll-linked color-temperature wash — cool slate at the hero, warms to
+     the site's own gold by the footer. z-20: above page content so the tint
+     is actually visible, but below #scrollCue's z-40 so the scroll cue's
+     own mix-blend-difference keeps differencing against the true page
+     colors rather than a wash-tinted composite (soft-light at 5% opacity
+     would barely move that calculation either way, but the ordering costs
+     nothing and removes the question entirely). Sits below #gate (z-100)
+     too, so it's already hidden while the gate is up. Background-color is
+     set entirely by JS, per scroll frame — see the color-wash IIFE. -->
+<div id="colorWash" aria-hidden="true" class="fixed inset-0 z-20 pointer-events-none mix-blend-soft-light opacity-5"></div>
+
+<!-- =================== MAIN CONTENT =================== -->
+<main id="main" class="bg-parchment">
+
+  <!-- ---------- HERO ---------- -->
+  <section id="hero" class="relative h-[100dvh] w-full overflow-hidden">
+    <img id="heroImg" src="Native_place_1.jpg" alt="Chiplun homeland" class="hero-img absolute inset-0 w-full h-full object-cover object-bottom">
+    <div class="absolute inset-0 bg-black/40"></div>
+
+    <svg class="absolute bottom-6 right-6 w-24 h-32 text-gold/25 hidden sm:block" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.4">
+      <path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/>
+      <path d="M48 8 C45 2,39 0,33 3"/>
+    </svg>
+
+    <div class="relative h-full w-full flex flex-col items-center justify-center text-center px-6">
+      <p class="reveal text-gold-soft text-sm sm:text-base tracking-widest mb-6 drop-shadow-md">
+        <span class="devnag-plain">आम्रकथा</span> <span class="font-serif italic">— The Real Amra-Katha</span>
+      </p>
+
+      <h1 class="reveal font-serif text-parchment text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-none drop-shadow-lg">
+        <span class="title-word">Sameer</span> <span class="title-word text-gold italic font-normal">&amp;</span> <span class="title-word">Nivedita</span>
+      </h1>
+
+      <div class="reveal flex items-center gap-4 mt-8">
+        <span class="w-10 sm:w-16 h-px bg-gold/70"></span>
+        <p class="font-serif text-gold-soft text-lg sm:text-xl tracking-[0.2em] uppercase">10<span class="lowercase">th</span> &amp; 11<span class="lowercase">th</span> March 2027</p>
+        <span class="w-10 sm:w-16 h-px bg-gold/70"></span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ---------- TRANSITIONAL PORTRAIT ---------- -->
+  <div class="reveal bg-parchment py-16 md:py-20 px-6 flex justify-center">
+    <img src="ME_with_her_5.jpg" alt="Couple"
+      class="h-auto max-h-[60vh] md:max-h-[70vh] w-auto mx-auto object-contain rounded-2xl border-2 border-gold shadow-soft">
+  </div>
+
+  <!-- classical border divider -->
+  <div class="w-full h-6 text-gold/50">
+    <svg width="100%" height="24" viewBox="0 0 240 24" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="border1" width="24" height="24" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1"/>
+          <rect x="8" y="8" width="8" height="8" transform="rotate(45 12 12)" fill="#FBF9F4" stroke="currentColor" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="24" fill="url(#border1)"/>
+    </svg>
+  </div>
+
+  <!-- ---------- THE STORY ---------- -->
+  <section id="story" class="relative py-24 md:py-32 px-6 md:px-12 max-w-6xl mx-auto overflow-hidden">
+
+    <!-- highly detailed, embossed tropical botanical background -->
+    <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <svg class="leaf-tropical absolute" style="top:2%; left:1%; width:150px; height:150px; color:#1E3A2B; opacity:0.9; transform: scale(1.05) rotate(-18deg);" viewBox="0 0 66 192"><use href="#tropical-banana"/></svg>
+    </div>
+
+    <div class="reveal text-left max-w-3xl mx-auto mb-20 md:mb-28">
+      <p class="devnag-plain text-sm italic text-forest-muted mb-8 text-left">(एक छोटीशी नोंद: आम्ही दोघेही 'भाईंचे' (पु. ल. देशपांडे) निस्सीम चाहते आहोत. आमची कला आणि आमचं जगणं त्यांच्या साहित्याने खूप समृद्ध केलंय. म्हणूनच, आमच्या आयुष्यातली ही सर्वात सुंदर गोष्ट त्यांच्याच शैलीत मांडण्याचा हा आमचा एक भावपूर्ण प्रयत्न. यात त्यांचा कोणताही अनादर करण्याचा आमचा हेतू नाही, तर ही त्यांना दिलेली एक छोटीशी आदरांजली आहे.)</p>
+      <h2 class="devnag text-4xl md:text-5xl text-forest mb-6">गोष्ट एका आम्रकथेची</h2>
+      <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">रसिक हो, सप्रेम नमस्कार!<br><br>
+पुण्यात एखादी सुरेल मैफल रंगलेली असो, आणि तिथे मी—म्हणजे तुमचा 'भाई' (पु. ल.)—हजर नाही, असं कधी होईल का? सदेह नसलो तरी, जिथे सच्चा सूर आणि लयीचा खेळ रंगतो, तिथे मी कुठेतरी रेंगाळत असतोच! पं. वसंतराव मराठ्यांच्या त्या मैफिलीत जेव्हा या निवेदिताचे सूर आणि आपल्या समीरच्या तबल्याची 'सम' पहिल्यांदाच एकत्र आली, तेव्हाच माझ्या लक्षात आलं होतं... ही नुसतीच गाण्याची साथ नाही, ही तर जन्मभराची संगत आहे! आता या दोन जिवांनी लग्नाच्या बोहल्यावर चढायचं ठरवलंय. तेव्हा म्हटलं, यांच्या या 'आम्रकथे'ची नांदी माझ्याच शब्दांत करूया.<br><br>
+ऐका तर मग...</p>
+    </div>
+
+    <div class="relative">
+      <!-- center spine, desktop only -->
+      <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gold/25 -translate-x-1/2"></div>
+
+      <!-- ITEM 1 -->
+      <div class="relative flex flex-col md:flex-row items-center gap-10 md:gap-16 mb-24 md:mb-32">
+        <div class="reveal w-full md:w-1/2 md:pr-12 md:text-right order-2 md:order-1">
+          <div class="flex items-center gap-2 md:justify-end mb-3">
+            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold text-xs tracking-[0.25em] uppercase">June 2024</p>
+          </div>
+          <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">मैफिलीतली 'सम'</h3>
+          <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">मंडळी, तसा हा सगळा योगायोगाचा खेळ! पं. वसंतराव मराठे ऊर्फ आपल्या मराठे दादांची मैफल रंगली होती. तिथे या मुलीचे गाणं आणि आपला हा पठ्ठ्या तबल्याला साथीला. कमाल बघा, त्या दिवशी या दोघांच्यात एकही शब्द दुहेरी झाला नाही. पण गाण्यातली 'सम' आणि दोघांची 'वेव्हलेंग्थ' पहिल्याच फटक्यात अशी काही अचूक जुळली, की पुढच्या 'आम्रकथेची' नांदी तिथेच झाली होती!</p>
+        </div>
+        <div class="reveal w-full md:w-1/2 md:pl-12 order-1 md:order-2">
+          <div class="parallax-photo rounded-2xl overflow-hidden shadow-soft aspect-[16/10] max-w-md mx-auto">
+            <img src="sangat_photo.jpg" alt="The accidental sangat" class="w-full h-full object-cover object-center">
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEM 2 -->
+      <div class="relative flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16 mb-24 md:mb-32">
+        <div class="reveal w-full md:w-1/2 md:pl-12 order-2">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold text-xs tracking-[0.25em] uppercase">July 2024</p>
+          </div>
+          <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">इन्स्टाग्राम ते टिळकचा चहा</h3>
+          <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">आता जुलै महिन्यात दादांच्या गुरुपौर्णिमेला समीरचा तबला सोलो झाला आणि या आजच्या जमान्यातल्या 'इन्स्टाग्राम'वरून निवेदिताचा मेसेज आला—'Your performance was brilliant'. बस! तिथून जो काही संवादाचा आलाप सुरू झाला... मग विचारता सोय नाही. यांचा वीकली रियाज़ कधी टेकडीवरच्या मॉर्निंग वॉकमध्ये आणि 'टिळकच्या' चहाच्या कपावर रेंगाळू लागला, हे या दोन वेड्या जिवांनाही कळलं नाही.</p>
+        </div>
+        <div class="reveal w-full md:w-1/2 md:pr-12 order-1">
+          <div class="parallax-photo max-w-xs mx-auto md:ml-auto md:mr-0">
+            <img src="Insta_start.jpg" alt="The first message" class="w-full h-auto rounded-2xl shadow-softsm">
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEM 3 (with watermark) -->
+      <div class="relative flex flex-col md:flex-row items-center gap-10 md:gap-16 mb-24 md:mb-32">
+        <img src="logo.png" alt="" aria-hidden="true" class="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] max-w-none opacity-[0.05] z-0">
+
+        <div class="reveal relative z-10 w-full md:w-1/2 md:pr-12 md:text-right order-2 md:order-1">
+          <div class="flex items-center gap-2 md:justify-end mb-3">
+            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold text-xs tracking-[0.25em] uppercase">The Turning Point</p>
+          </div>
+          <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">चिपळूणची वारी आणि 'आम्रकथा'</h3>
+          <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">खरा टर्निंग पॉईंट आला तो महाशिवरात्रीला. भिले, चिपळूणला निवेदिताच्या घरी समीरचं जाणं झालं आणि तिथे काकांसोबत हापूस आंब्यांवरून रंगलेल्या गप्पांतून चक्क एक भन्नाट आयडिया क्लिक झाली—'आम्रकथा'! आता पुण्यात आंब्याच्या पेट्या पोहोचता-पोहोचता मोडक आणि केतकर या दोन्ही कुटुंबांचं बाँडिंग मात्र एकदम घट्ट होऊन गेलं. आंब्याच्या गोडीने नात्यातही गोडवा आणला म्हणायचा!</p>
+        </div>
+        <div class="reveal relative z-10 w-full md:w-1/2 md:pl-12 order-1 md:order-2">
+          <div class="space-y-4 max-w-md mx-auto">
+            <div class="parallax-photo rounded-2xl overflow-hidden shadow-soft">
+              <img src="me_and_her_4.jpg" alt="Chiplun visit" class="w-full h-auto object-contain">
+            </div>
+            <div class="parallax-photo rounded-2xl overflow-hidden shadow-softsm max-w-[70%] ml-auto">
+              <img src="Amrakatha_marketting.jpg" alt="Amrakatha idea" class="w-full h-auto object-contain">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEM 4 -->
+      <div class="relative flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
+        <div class="reveal w-full md:w-1/2 md:pl-12 order-2">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold text-xs tracking-[0.25em] uppercase">June 2025</p>
+          </div>
+          <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">मुक्काम पोस्ट: आम्रबन</h3>
+          <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">हळूहळू एकमेकांना भेटण्याची नवी कारणं शोधली जाऊ लागली. कधी रियाज़, तर कधी चक्क हॉस्पिटलच्या वाऱ्या! शेवटी प्रपोजलचा तो दिवस उजाडला आणि जूनमध्ये दोघांच्याही मनातला होकार शब्दांत आलाच. आमच्या गुरुबंधूंना याची आधीच चाहूल लागली होती म्हणा. आता पुण्यात जुळलेले हे सूर आणि सुरू झालेली ही 'आम्रकथा', एका सुंदर योगायोगाने थेट 'आम्रबन'मध्ये लग्नाच्या मंडपात जन्मभरासाठी मुक्कामाला पोहोचणार आहे. तथास्तु!</p>
+        </div>
+        <div class="reveal w-full md:w-1/2 md:pr-12 order-1">
+          <div class="parallax-photo rounded-2xl overflow-hidden shadow-soft max-w-sm mx-auto">
+            <img src="me_and_her_3.jpg" alt="The proposal" class="w-full h-auto object-contain">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal text-center mt-20 md:mt-28 max-w-2xl mx-auto">
+      <p class="devnag text-forest-muted text-xl md:text-2xl leading-relaxed md:leading-loose italic">माणसांच्या या गर्दीत, जेव्हा असे दोन सुरेल जीव एकमेकांना गवसतात, तेव्हा वाटतं... जगातली सगळीच लय अजून बिघडलेली नाही; अजूनही खूप काही सुंदर शिल्लक आहे! समीर आणि निवेदिताची ही 'आम्रकथा' आता एका पवित्र बंधनात अडकणार आहे. तुमच्या या 'भाई'चा आशीर्वाद या दोन वेड्या जिवांच्या पाठीशी आहेच आणि सदैव असणार आहे! पण रसिकहो, कोणतीही मैफल तुमच्या दाद आणि आशीर्वादांशिवाय पूर्ण कशी होईल? या नव्या प्रवासाला निघताना त्यांना तुमच्या आशीर्वादांची शिदोरी हवी आहे. तेव्हा नक्की या... ही मैफल तुमच्याविना अपूर्ण आहे.<br><br>— तुमचा, पु. ल. देशपांडे</p>
+    </div>
+  </section>
+
+  <div class="w-full h-6 text-gold/50">
+    <svg width="100%" height="24" viewBox="0 0 240 24" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="border1b" width="24" height="24" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1"/>
+          <rect x="8" y="8" width="8" height="8" transform="rotate(45 12 12)" fill="#FBF9F4" stroke="currentColor" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="24" fill="url(#border1b)"/>
+    </svg>
+  </div>
+
+  <!-- ---------- ITINERARY ---------- -->
+  <section id="itinerary" class="relative py-28 md:py-40 px-6 md:px-12 bg-forest/[0.035] overflow-hidden">
+
+    <!-- gold line-art toran, spans the top of the celebrations container -->
+    <svg class="absolute top-0 left-0 w-full h-12 text-gold/50" viewBox="0 0 240 48" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <pattern id="toranPattern" width="40" height="48" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="3" x2="40" y2="3" stroke="currentColor" stroke-width="1"/>
+          <line x1="20" y1="3" x2="20" y2="13" stroke="currentColor" stroke-width="0.6"/>
+          <g transform="translate(9.5,10) scale(0.105)"><use href="#leaf-mango"/></g>
+        </pattern>
+      </defs>
+      <rect width="100%" height="48" fill="url(#toranPattern)"/>
+    </svg>
+
+    <svg class="absolute top-10 right-10 w-20 h-28 text-gold/10 hidden lg:block" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+
+    <!-- clearly visible, embossed green leaves — stamped into the celebrations paper -->
+    <svg class="leaf-embossed absolute top-[16%] left-[4%] w-11 h-11 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(-14deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
+    <svg class="leaf-embossed absolute top-[64%] left-[2%] w-9 h-9 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(22deg)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
+    <svg class="leaf-embossed absolute bottom-[8%] right-[6%] w-14 h-14 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(16deg) scaleX(-1)" viewBox="0 0 80 66" aria-hidden="true"><use href="#leaf-fanpalm"/></svg>
+    <svg class="leaf-embossed absolute top-[36%] right-[3%] w-10 h-10 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-20deg)" viewBox="0 0 70 100" aria-hidden="true"><use href="#leaf-coconut"/></svg>
+
+    <!-- confetti trigger point: IntersectionObserver on #itinerary fires a canvas-confetti blast, see script -->
+
+    <div class="reveal text-center mb-16 md:mb-20 max-w-2xl mx-auto">
+      <p class="text-gold text-xs tracking-[0.3em] uppercase mb-3">Save The Dates</p>
+      <h2 class="font-serif text-4xl md:text-5xl text-forest">The Celebrations</h2>
+      <p class="text-forest-muted mt-4 text-sm">Full schedules and venues will follow soon — here's what to block on your calendar.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
+
+      <div class="reveal glass rounded-2xl shadow-softsm p-8 flex flex-col">
+        <p class="text-gold text-[11px] tracking-[0.25em] uppercase mb-2">Event One</p>
+        <h3 class="font-serif text-2xl text-forest mb-6">Sangeet &amp; Sakharpuda</h3>
+        <div class="space-y-3 text-sm text-forest-muted mb-8">
+          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> 10 March 2027 · time to follow</p>
+          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Venue to be announced</p>
+        </div>
+        <a href="#" class="mt-auto inline-flex items-center justify-center gap-2 text-xs tracking-[0.2em] uppercase border border-gold text-forest hover:bg-gold transition-colors rounded-full px-6 py-3">View on Maps</a>
+      </div>
+
+      <div class="reveal glass rounded-2xl shadow-softsm p-8 flex flex-col">
+        <p class="text-gold text-[11px] tracking-[0.25em] uppercase mb-2">Event Two</p>
+        <h3 class="font-serif text-2xl text-forest mb-6">Wedding Ceremony</h3>
+        <div class="space-y-3 text-sm text-forest-muted mb-8">
+          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> 11 March 2027 · time to follow</p>
+          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg> Venue to be announced</p>
+        </div>
+        <a href="#" class="mt-auto inline-flex items-center justify-center gap-2 text-xs tracking-[0.2em] uppercase border border-gold text-forest hover:bg-gold transition-colors rounded-full px-6 py-3">View on Maps</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ---------- RSVP ---------- -->
+  <section id="rsvp" class="relative py-28 md:py-40 px-6 md:px-12 overflow-hidden">
+    <svg class="leaf-embossed absolute top-[8%] right-[7%] w-12 h-12 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(20deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
+    <svg class="leaf-embossed absolute bottom-[10%] left-[5%] w-11 h-11 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-16deg) scaleX(-1)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
+
+    <div class="reveal text-center mb-14 max-w-lg mx-auto">
+      <p class="text-gold text-xs tracking-[0.3em] uppercase mb-3">Kindly Respond</p>
+      <h2 class="font-serif text-4xl md:text-5xl text-forest">RSVP</h2>
+    </div>
+
+    <div id="rsvpCard" class="reveal max-w-lg mx-auto glass rounded-2xl shadow-soft p-8 md:p-12">
+
+      <!-- ---------- STEP 1: choose a side ---------- -->
+      <div id="rsvpChoice" class="text-center transition-all duration-500 ease-out">
+        <p class="font-serif italic text-forest text-xl md:text-2xl mb-10">Join us from&hellip;</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <button type="button" class="side-choice-btn group rounded-2xl border-2 border-forest-deep/25 hover:border-forest-deep bg-forest-deep/[0.03] hover:bg-forest-deep/[0.07] transition-all duration-300 py-8 px-6" data-side="वरपक्ष" data-accent="side-accent-var">
+            <span class="devnag-plain block text-3xl md:text-4xl text-forest-deep mb-2 transition-transform duration-300 group-hover:scale-105">वरपक्ष</span>
+            <span class="devnag block text-xs text-forest-muted mt-1">मोडक कुटुंबीय</span>
+          </button>
+          <button type="button" class="side-choice-btn group rounded-2xl border-2 border-gold/35 hover:border-gold bg-gold/[0.05] hover:bg-gold/[0.1] transition-all duration-300 py-8 px-6" data-side="वधूपक्ष" data-accent="side-accent-vadhu">
+            <span class="devnag-plain block text-3xl md:text-4xl text-gold-deep mb-2 transition-transform duration-300 group-hover:scale-105">वधूपक्ष</span>
+            <span class="devnag block text-xs text-forest-muted mt-1">केतकर कुटुंबीय</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ---------- STEP 2: the actual RSVP form (unchanged, just wrapped) ---------- -->
+      <div id="rsvpFormWrap" class="hidden transition-all duration-500 ease-out">
+        <div class="text-center mb-8">
+          <button type="button" id="changeSideBtn" class="inline-flex items-center gap-1.5 text-[11px] tracking-[0.15em] uppercase text-forest-muted hover:text-gold transition-colors mb-5">
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Change selection
+          </button>
+          <p class="text-gold text-[11px] tracking-[0.3em] uppercase mb-2">Joining From</p>
+          <p id="chosenSideLabel" class="devnag-plain text-3xl md:text-4xl text-forest"></p>
+        </div>
+
+        <form id="rsvpForm" action="#" novalidate>
+          <input type="hidden" id="guestSide" name="guest_side" value="">
+
+          <div class="mb-6">
+            <label for="entry-type" class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Submission Type</label>
+            <select id="entry-type" name="entryType" required
+              class="w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors">
+              <option value="" disabled selected>Select</option>
+              <option value="First time RSVP">First time RSVP</option>
+              <option value="Updating previous RSVP">Updating previous RSVP</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label for="firstName" class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">First Name</label>
+              <input id="firstName" name="firstName" type="text" required
+                class="w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors">
+            </div>
+            <div>
+              <label for="lastName" class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Last Name</label>
+              <input id="lastName" name="lastName" type="text" required
+                class="w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors">
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <span class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Attending</span>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" id="attending-yes" name="attendance" value="yes" class="peer sr-only" required>
+                <span class="block text-center text-sm border border-forest/20 peer-checked:border-gold peer-checked:bg-gold/15 peer-checked:text-forest rounded-full py-2.5 transition-colors">Yes, joyfully</span>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" id="attending-no" name="attendance" value="no" class="peer sr-only" required>
+                <span class="block text-center text-sm border border-forest/20 peer-checked:border-gold peer-checked:bg-gold/15 peer-checked:text-forest rounded-full py-2.5 transition-colors">Regretfully, no</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label for="events-dropdown" class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Which events will you attend?</label>
+            <select id="events-dropdown" name="eventsAttending" required
+              class="w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors">
+              <option value="" disabled selected>Select</option>
+              <option value="Both Days">Both Days (10th &amp; 11th March)</option>
+              <option value="11th Only">Only 11th March Wedding</option>
+            </select>
+            <p id="events-not-applicable" class="hidden w-full border-b-2 border-forest/10 text-forest-muted/60 py-2 italic text-sm">Not Applicable</p>
+            <!-- disabled selects don't submit; this mirrors the value while the dropdown above is locked -->
+            <input type="hidden" id="events-dropdown-sync" name="eventsAttending" value="Not Attending" disabled>
+          </div>
+
+          <div class="mb-8">
+            <label for="guest-count" class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Number of Guests (Including You)</label>
+            <select id="guest-count" name="guestCount" required
+              class="w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors">
+              <option value="" disabled selected>Select</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6+">6+</option>
+            </select>
+            <p id="guests-not-applicable" class="hidden w-full border-b-2 border-forest/10 text-forest-muted/60 py-2 italic text-sm">Not Applicable</p>
+          </div>
+
+          <button type="submit" class="w-full bg-gold hover:bg-gold-deep text-forest hover:text-parchment transition-colors duration-300 rounded-full py-3.5 text-xs tracking-[0.25em] uppercase font-medium">
+            Send RSVP
+          </button>
+        </form>
+
+        <div id="rsvpThanks" class="hidden text-center py-6">
+          <svg id="mangoSeal" class="mango-seal w-14 h-auto text-gold mx-auto mb-4" viewBox="0 0 100 140" fill="none" aria-hidden="true">
+            <path pathLength="1" d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+            <path pathLength="1" d="M48 8 C45 2,39 0,33 3" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <p class="font-serif text-xl text-forest mb-1">Thank you!</p>
+          <p class="devnag text-forest-muted text-sm">तुमचा प्रतिसाद आम्हाला मिळाला.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ---------- FOOTER ---------- -->
+  <footer class="relative bg-forest text-parchment py-24 px-6 text-center overflow-hidden">
+    <svg class="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-6 text-gold/40" viewBox="0 0 240 24" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <pattern id="border2" width="24" height="24" patternUnits="userSpaceOnUse">
+          <line x1="0" y1="12" x2="24" y2="12" stroke="currentColor" stroke-width="1"/>
+          <rect x="8" y="8" width="8" height="8" transform="rotate(45 12 12)" fill="#1E3A2B" stroke="currentColor" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="24" fill="url(#border2)"/>
+    </svg>
+
+    <div class="reveal max-w-2xl mx-auto pt-16">
+      <blockquote class="devnag italic text-xl md:text-2xl leading-loose text-parchment/90">
+        &ldquo;जीवनातल्या सुखदुःखाच्या मैफिलीत योग्य साथ मिळाली, की जगण्याचं गाणं होतं...&rdquo;
+      </blockquote>
+      <p class="devnag text-gold-soft text-xs md:text-sm mt-4 tracking-wide">— पु. ल. देशपांडे <span class="text-parchment/40">(संदर्भ: 'गुण गाईन आवडी')</span></p>
+
+      <div class="mt-10">
+        <p class="font-serif italic text-parchment/70 text-sm md:text-base mb-2">With Love,</p>
+        <p class="font-serif text-3xl md:text-4xl tracking-wide text-parchment">Sameer <span class="text-gold italic font-normal">&amp;</span> Nivedita</p>
+        <p class="font-serif tracking-wide text-parchment text-base md:text-lg mt-4">Together with the Modak &amp; Ketkar Families</p>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  // ---------- Password Gate ----------
+  // Root cause (confirmed by testing the actual shipped file inside a
+  // sandbox="allow-scripts allow-same-origin" iframe — the same restriction
+  // Claude's artifact preview applies): a sandboxed iframe without the
+  // 'allow-forms' permission blocks native <form> submission at the browser
+  // level, BEFORE any JS 'submit' listener ever runs. Every earlier fix
+  // (preventDefault ordering, trim, sessionStorage guarding) lived inside
+  // that listener, so none of it mattered — the listener was never reached.
+  // Fix: stop relying on form submission entirely. The button is now
+  // type="button" (no longer participates in form submission at all) and is
+  // wired directly via 'click', with a parallel 'keydown' listener on the
+  // input for Enter. A 'submit' listener is kept purely as a harmless no-op
+  // fallback for contexts where the form *can* submit.
+  (function () {
+    const PASSWORD = "PuneChiplunPune";
+    const gate = document.getElementById('gate');
+    const form = document.getElementById('gateForm');
+    const input = document.getElementById('gatePassword');
+    const button = document.getElementById('gateUnlockBtn');
+    const error = document.getElementById('gateError');
+    const bgMusic = document.getElementById('bg-music');
+    const audioBtn = document.getElementById('audioToggle');
+    const iconOn = document.getElementById('iconSoundOn');
+    const iconOff = document.getElementById('iconSoundOff');
+    const gateContentEls = document.querySelectorAll('.gate-content');
+    const heroImg = document.getElementById('heroImg');
+    const titleWords = document.querySelectorAll('.title-word');
+
+    function safeGet(key) {
+      try { return sessionStorage.getItem(key); } catch (err) { return null; }
+    }
+    function safeSet(key, value) {
+      try { sessionStorage.setItem(key, value); } catch (err) { /* storage unavailable — unlock still proceeds */ }
+    }
+
+    function revealAudioButton() {
+      if (!audioBtn) return;
+      audioBtn.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function unlockGate(skipAnimation) {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+
+      if (skipAnimation) {
+        // Repeat visit within the same session — no drama, just the finished state.
+        gate.style.display = 'none';
+        if (heroImg) heroImg.classList.add('hero-img-focused');
+        titleWords.forEach(function (el) { el.classList.add('title-word-in'); });
+        revealAudioButton();
+        return;
+      }
+
+      // Stage 1 (0–500ms): the interactive gate content (password card,
+      // corner motifs) fades out. The dark background and the falling
+      // leaves are untouched here on purpose — they carry the "linger"
+      // that follows.
+      gateContentEls.forEach(function (el) { el.classList.add('opacity-0', 'pointer-events-none'); });
+
+      // Stage 2 (fires at 1700ms = 500ms fade + 1200ms linger in the dark):
+      // the gate dissolves over 2s while, underneath, the hero image pulls
+      // out of a heavy blur over 3s — the two run concurrently, so the
+      // image keeps sharpening for a second after the gate itself is gone.
+      setTimeout(function () {
+        gate.classList.add('opacity-0', 'pointer-events-none');
+        if (heroImg) heroImg.classList.add('hero-img-focused');
+        revealAudioButton();
+
+        // Title floats in a beat after the focus pull starts, so it reads
+        // as emerging out of the image rather than popping in at the exact
+        // same instant as the blur begins lifting.
+        setTimeout(function () {
+          titleWords.forEach(function (el) { el.classList.add('title-word-in'); });
+        }, 400);
+      }, 1700);
+
+      // Stage 3: cleanup once the gate's own 2s dissolve has finished.
+      setTimeout(function () {
+        gate.style.display = 'none';
+      }, 1700 + 2000);
+    }
+
+    if (safeGet('amrakatha_unlocked') === 'true') {
+      unlockGate(true);
+    } else {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => input.focus(), 300);
+    }
+
+    function attemptUnlock() {
+      // Case-insensitive + trimmed, so stray spaces or accidental caps don't block a correct entry.
+      if (input.value.trim().toLowerCase() === PASSWORD.toLowerCase()) {
+        safeSet('amrakatha_unlocked', 'true');
+        unlockGate(false);
+        // Started from this same user-gesture click/keypress, so it satisfies
+        // browser autoplay policy. Swallow rejection if the file can't load.
+        if (bgMusic) {
+          bgMusic.play().catch(() => {});
+        }
+      } else {
+        error.classList.remove('hidden');
+        input.classList.add('shake');
+        input.value = '';
+        setTimeout(() => input.classList.remove('shake'), 500);
+        input.focus();
+      }
+    }
+
+    // Primary path: direct click, independent of <form> submission.
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      attemptUnlock();
+    });
+
+    // Primary path: Enter key while focused in the password field.
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        attemptUnlock();
+      }
+    });
+
+    // Defensive fallback only — a no-op in the sandboxed case above, but
+    // keeps things correct if this file is ever run somewhere forms aren't blocked.
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      attemptUnlock();
+    });
+
+    // ---------- Audio toggle ----------
+    if (audioBtn && bgMusic) {
+      audioBtn.addEventListener('click', function () {
+        bgMusic.muted = !bgMusic.muted;
+        const muted = bgMusic.muted;
+        iconOn.classList.toggle('hidden', muted);
+        iconOff.classList.toggle('hidden', !muted);
+        audioBtn.setAttribute('aria-pressed', String(!muted));
+        audioBtn.setAttribute('aria-label', muted ? 'Unmute background music' : 'Mute background music');
+      });
+    }
+  })();
+
+  // ---------- Scroll Reveal ----------
+  (function () {
+    const items = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+
+    items.forEach((el, i) => {
+      el.style.transitionDelay = (i % 2 === 1) ? '150ms' : '0ms';
+      observer.observe(el);
+    });
+  })();
+
+  // ---------- Scroll-linked color-temperature wash ----------
+  // Deliberately plain JS + rAF rather than CSS animation-timeline: scroll(),
+  // even though the latter is now supported in Chrome/Edge and Safari 26+:
+  // guests on this site will be on a real mix of phones and Safari versions,
+  // not a controlled dev environment, and a wedding invite failing silently
+  // for a fraction of them is a worse outcome than the marginal compositor-
+  // thread benefit of the CSS-only approach. A background-color tint update
+  // is cheap enough that a throttled scroll listener costs nothing anyone
+  // would feel.
+  (function () {
+    const wash = document.getElementById('colorWash');
+    if (!wash) return;
+
+    const COOL = [20, 38, 44];   // a cool, shadowed slate — the hero's opening
+    const WARM = [229, 169, 60]; // #E5A93C, the site's own gold — the RSVP/footer's close
+    let ticking = false;
+
+    function applyWash() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const t = Math.min(1, Math.max(0, window.scrollY / max));
+      const r = Math.round(COOL[0] + (WARM[0] - COOL[0]) * t);
+      const g = Math.round(COOL[1] + (WARM[1] - COOL[1]) * t);
+      const b = Math.round(COOL[2] + (WARM[2] - COOL[2]) * t);
+      wash.style.backgroundColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(applyWash);
+        ticking = true;
+      }
+    }
+
+    applyWash();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+  })();
+
+  // ---------- 'Physical photograph' parallax: story timeline images ----------
+  // Targets .parallax-photo — the inner frame div around each timeline
+  // image, never the outer .reveal wrapper (see the CSS comment for why).
+  (function () {
+    const photos = document.querySelectorAll('#story .parallax-photo');
+    if (!photos.length) return;
+
+    const STRENGTH = 0.08; // small on purpose — "minimal and elegant, not aggressive"
+    let ticking = false;
+
+    function applyParallax() {
+      const viewportCenter = window.innerHeight / 2;
+      photos.forEach(function (el) {
+        const rect = el.getBoundingClientRect();
+        const elCenter = rect.top + rect.height / 2;
+        const offset = (elCenter - viewportCenter) * STRENGTH;
+        el.style.transform = 'translateY(' + offset.toFixed(1) + 'px)';
+      });
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(applyParallax);
+        ticking = true;
+      }
+    }
+
+    applyParallax();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+  })();
+
+  // ---------- Persistent scroll cue: fade out once the footer is reached ----------
+  (function () {
+    const scrollCue = document.getElementById('scrollCue');
+    const scrollCueLink = document.getElementById('scrollCueLink');
+    const footerEl = document.querySelector('footer');
+    if (!scrollCue || !footerEl) return;
+
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        scrollCue.classList.toggle('opacity-0', entry.isIntersecting);
+        // Keep the link out of the hit-testing tree while it's invisible,
+        // so it can't sit as a dead click-zone over the footer's text.
+        if (scrollCueLink) scrollCueLink.classList.toggle('pointer-events-auto', !entry.isIntersecting);
+      });
+    }, { threshold: 0.05 });
+
+    observer.observe(footerEl);
+  })();
+
+  // ---------- Venue: one-time premium marigold confetti blast ----------
+  (function () {
+    const section = document.getElementById('itinerary');
+    if (!section) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (typeof confetti === 'function') {
+            confetti({
+              particleCount: 150,
+              spread: 120,
+              origin: { y: 0.6 },
+              ticks: 300,
+              colors: ['#FFD700', '#FFA500', '#FF8C00']
+            });
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    observer.observe(section);
+  })();
+
+  // ---------- RSVP: side choice → form transition ----------
+  (function () {
+    const card = document.getElementById('rsvpCard');
+    const choicePanel = document.getElementById('rsvpChoice');
+    const formPanel = document.getElementById('rsvpFormWrap');
+    const guestSide = document.getElementById('guestSide');
+    const chosenSideLabel = document.getElementById('chosenSideLabel');
+    const changeSideBtn = document.getElementById('changeSideBtn');
+    if (!card || !choicePanel || !formPanel || !guestSide) return;
+
+    const TRANSITION_MS = 500;
+
+    function chooseSide(side, accentClass) {
+      guestSide.value = side;
+      if (chosenSideLabel) chosenSideLabel.textContent = side;
+      card.classList.remove('side-accent-var', 'side-accent-vadhu');
+      card.classList.add(accentClass);
+
+      choicePanel.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      setTimeout(function () {
+        choicePanel.classList.add('hidden');
+        formPanel.classList.remove('hidden');
+        formPanel.classList.add('opacity-0', 'translate-y-2');
+        void formPanel.offsetWidth; // force reflow so the fade-in actually transitions
+        formPanel.classList.remove('opacity-0', 'translate-y-2');
+      }, TRANSITION_MS);
+    }
+
+    document.querySelectorAll('.side-choice-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        chooseSide(btn.dataset.side, btn.dataset.accent);
+      });
+    });
+
+    if (changeSideBtn) {
+      changeSideBtn.addEventListener('click', function () {
+        formPanel.classList.add('opacity-0', 'translate-y-2', 'pointer-events-none');
+        setTimeout(function () {
+          formPanel.classList.add('hidden');
+          choicePanel.classList.remove('hidden');
+          choicePanel.classList.add('opacity-0', '-translate-y-2');
+          void choicePanel.offsetWidth;
+          choicePanel.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        }, TRANSITION_MS);
+      });
+    }
+  })();
+
+  // ---------- RSVP: attendance-driven field logic ----------
+  (function () {
+    const attendingYes = document.getElementById('attending-yes');
+    const attendingNo = document.getElementById('attending-no');
+    const eventsDropdown = document.getElementById('events-dropdown');
+    const eventsSync = document.getElementById('events-dropdown-sync');
+    const eventsNA = document.getElementById('events-not-applicable');
+    const guestCount = document.getElementById('guest-count');
+    const guestsNA = document.getElementById('guests-not-applicable');
+    if (!attendingYes || !attendingNo || !eventsDropdown || !guestCount) return;
+
+    function applyAttendance() {
+      if (attendingNo.checked) {
+        // "Not Attending" is not a real <option> (native <select> rendering
+        // does not reliably hide <option hidden> across browsers, so a
+        // picked-value trick previously let it show up in the open list).
+        // Instead: swap the select out for plain "Not Applicable" text, and
+        // carry the value on a hidden input with the same name, since a
+        // disabled <select> is excluded from FormData.
+        eventsDropdown.value = '';
+        eventsDropdown.disabled = true;
+        eventsDropdown.classList.add('hidden');
+        if (eventsNA) eventsNA.classList.remove('hidden');
+        if (eventsSync) {
+          eventsSync.disabled = false;
+          eventsSync.value = 'Not Attending';
+        }
+
+        guestCount.value = '';
+        guestCount.disabled = true;
+        guestCount.classList.add('hidden');
+        if (guestsNA) guestsNA.classList.remove('hidden');
+      } else if (attendingYes.checked) {
+        eventsDropdown.disabled = false;
+        eventsDropdown.classList.remove('hidden');
+        eventsDropdown.value = '';
+        if (eventsNA) eventsNA.classList.add('hidden');
+        if (eventsSync) { eventsSync.disabled = true; }
+
+        guestCount.disabled = false;
+        guestCount.classList.remove('hidden');
+        if (guestsNA) guestsNA.classList.add('hidden');
+      }
+    }
+
+    attendingYes.addEventListener('change', applyAttendance);
+    attendingNo.addEventListener('change', applyAttendance);
+  })();
+
+  // ---------- RSVP (front-end only — no backend wired up) ----------
+  (function () {
+    const form = document.getElementById('rsvpForm');
+    const thanks = document.getElementById('rsvpThanks');
+    const mangoSeal = document.getElementById('mangoSeal');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      form.classList.add('hidden');
+      thanks.classList.remove('hidden');
+
+      if (mangoSeal) {
+        void mangoSeal.offsetWidth; // force reflow so the stroke-draw transition actually plays
+        setTimeout(function () {
+          mangoSeal.classList.add('is-drawn');
+          // Soft double-pulse, like a wax seal pressed and released — not a
+          // notification buzz. Feature-detected: navigator.vibrate doesn't
+          // exist on iOS Safari at all, so this is a silent no-op there and
+          // on any other unsupported browser.
+          if ('vibrate' in navigator) { navigator.vibrate([12, 30, 18]); }
+        }, 120);
+      }
+
+      // Quieter, gold-only confetti — distinct from the itinerary section's
+      // larger marigold blast, so the RSVP moment reads as an intimate seal
+      // rather than a repeat celebration.
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.5 },
+          ticks: 250,
+          colors: ['#E5A93C', '#F0C877']
+        });
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
