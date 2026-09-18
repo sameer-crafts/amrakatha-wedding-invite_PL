@@ -1155,14 +1155,19 @@
     attendingNo.addEventListener('change', applyAttendance);
   })();
 
-  // ---------- RSVP (front-end only — no backend wired up) ----------
+  // ---------- RSVP: submit to Cloudflare Worker → Apps Script → Sheet ----------
   (function () {
+    const WORKER_URL = 'https://amrakatha-rsvp.sam1994modak.workers.dev/';
+
     const form = document.getElementById('rsvpForm');
     const thanks = document.getElementById('rsvpThanks');
     const leafSeal = document.getElementById('leafSeal');
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (!form.checkValidity()) { form.reportValidity(); return; }
+    const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+    if (!form || !submitBtn) return;
+
+    const originalBtnText = submitBtn.textContent;
+
+    function playSuccessAnimations() {
       form.classList.add('hidden');
       thanks.classList.remove('hidden');
 
@@ -1190,6 +1195,54 @@
           colors: ['#E5A93C', '#F0C877']
         });
       }
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      // FormData respects the `disabled` attribute — this is exactly what
+      // makes the eventsAttending hidden-sync-field trick above resolve
+      // correctly: whichever of the two same-named fields is currently
+      // enabled is the one FormData picks up.
+      const formData = new FormData(form);
+      const payload = {
+        entryType: formData.get('entryType') || '',
+        firstName: (formData.get('firstName') || '').trim(),
+        lastName: (formData.get('lastName') || '').trim(),
+        guest_side: formData.get('guest_side') || '',
+        attendance: formData.get('attendance') || '',
+        eventsAttending: formData.get('eventsAttending') || 'Not Attending',
+        // guestCount has no sync-field fallback like eventsAttending does —
+        // it's simply absent from FormData when disabled (attendance = "no").
+        // Sending an explicit 'N/A' keeps the Sheet column from getting a
+        // blank/undefined value in that row.
+        guestCount: formData.get('guestCount') || 'N/A'
+      };
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Request failed with status ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data || data.success !== true) {
+            throw new Error((data && data.error) || 'Unknown error from server');
+          }
+          playSuccessAnimations();
+        })
+        .catch(function (err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+          alert('Something went wrong sending your RSVP. Please try again in a moment.\n\n(' + err.message + ')');
+        });
     });
   })();
 </script>
