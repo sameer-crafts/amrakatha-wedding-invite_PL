@@ -361,6 +361,15 @@
         <button id="gateUnlockBtn" type="button" class="invisible btn-breathe mt-8 inline-flex items-center gap-2 text-gold border border-gold/60 hover:bg-gold hover:text-forest transition-colors duration-300 rounded-full px-8 py-3 text-xs tracking-[0.2em] uppercase">
           Unlock <span aria-hidden="true">&rarr;</span>
         </button>
+        <!-- Sound hint: shown whenever Unlock is part of the card (loading, new device, known device);
+             hidden on dead-end and error cards (showMessage / showRetry in the gate script) -->
+        <p id="gateSoundHint" class="hidden mt-6 text-center text-parchment/60 text-xs tracking-wide leading-relaxed" style="text-wrap: balance;">
+          <svg class="inline-block w-3.5 h-3.5 mr-1.5 align-text-bottom" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.5 9.5v5h3.2l4.6 3.6V5.9L7.7 9.5H4.5Z"/>
+            <path d="M15.8 9a4 4 0 010 6"/>
+            <path d="M18.2 6.6a7.5 7.5 0 010 10.8"/>
+          </svg>A little music awaits — please turn your sound on.
+        </p>
       </form>
 
       <!-- delicate bottom ornament -->
@@ -652,8 +661,7 @@
     <svg class="leaf-embossed absolute bottom-[10%] left-[5%] w-11 h-11 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-16deg) scaleX(-1)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
 
     <div class="reveal text-center mb-14 max-w-lg mx-auto">
-      <p class="text-gold text-xs tracking-[0.3em] uppercase mb-3">Kindly Respond</p>
-      <h2 class="font-serif text-4xl md:text-5xl text-forest">RSVP</h2>
+      <h2 class="devnag text-4xl md:text-5xl text-forest">मैफिलीची हजेरी</h2>
     </div>
 
     <div id="rsvpCard" class="reveal max-w-lg mx-auto glass rounded-2xl shadow-soft p-8 md:p-12">
@@ -756,7 +764,7 @@
           </div>
 
           <button type="submit" class="w-full bg-gold hover:bg-gold-deep text-forest hover:text-parchment transition-colors duration-300 rounded-full py-3.5 text-xs tracking-[0.25em] uppercase font-medium">
-            Send RSVP
+            Send
           </button>
         </form>
 
@@ -899,6 +907,7 @@
     const greeting = document.getElementById('gateGreeting');
     const guestNameEl = document.getElementById('gateGuestName');
     const intro = document.getElementById('gateIntro');
+    const soundHint = document.getElementById('gateSoundHint');
     const UNLOCK_BTN_HTML = button.innerHTML;
     const RETRY_BTN_HTML = UNLOCK_BTN_HTML.replace('Unlock', 'Try again');
     const WORD_ERROR_TEXT = error.textContent;
@@ -1008,6 +1017,7 @@
     // Link not usable: a message and nothing to press.
     function showMessage(lines) {
       ready = false; retryMode = false;
+      soundHint.classList.add('hidden');      // nothing will play from this card
       greeting.classList.add('hidden');
       setIntro(lines);
       intro.classList.remove('mb-8');
@@ -1021,6 +1031,7 @@
     // Could not reach the server: a message and a "Try again" button.
     function showRetry(lines) {
       ready = false; retryMode = true;
+      soundHint.classList.add('hidden');      // an error card should not also promise music
       greeting.classList.add('hidden');
       setIntro(lines);
       intro.classList.add('mb-8');
@@ -1034,6 +1045,7 @@
     // Waiting for the server: the card keeps its shape, content is held back.
     function showLoading() {
       ready = false; retryMode = false;
+      soundHint.classList.remove('hidden');   // there from the first moment, so nothing jumps in later
       greeting.classList.remove('hidden');
       greeting.classList.remove('gate-in');
       guestNameEl.innerHTML = '&nbsp;';
@@ -1073,6 +1085,7 @@
     // Link recognised: welcome the guest by name.
     function showReady(name, wordRequired) {
       needWord = wordRequired; ready = true; retryMode = false;
+      soundHint.classList.remove('hidden');
       guestNameEl.textContent = name || '';
       greeting.classList.toggle('hidden', !name);
       requestAnimationFrame(function () { greeting.classList.add('gate-in'); });
