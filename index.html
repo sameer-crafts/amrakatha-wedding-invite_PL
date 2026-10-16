@@ -67,6 +67,18 @@
   }
   .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
 
+  /* Gate: the personal welcome stays hidden until the server has recognised the guest's link, then fades in */
+  #gateGreeting { opacity: 0; transition: opacity 1000ms ease-out; }
+  #gateGreeting.gate-in { opacity: 1; }
+
+  /* Gate: "Please wait" line shown while the server is asked. The invisible final line sits in the same
+     grid cell, so the card keeps exactly the size it will have; the four dots always take up their
+     space and are only switched on one by one, so the text never shifts sideways. */
+  .wait-line { display: inline-grid; }
+  .wait-line > span { grid-area: 1 / 1; }
+  .wait-dot { opacity: 0; }
+  .wait-dot.on { opacity: 1; }
+
   /* Gentle scroll-cue pulse (deliberately not a bounce) */
   @keyframes softpulse { 0%,100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 0.9; transform: translateY(6px); } }
   .softpulse { animation: softpulse 2.6s ease-in-out infinite; }
@@ -325,19 +337,28 @@
 
       <p class="devnag-plain text-gold text-lg tracking-wide mb-2">आम्रकथा</p>
       <h1 class="font-serif text-3xl sm:text-4xl text-parchment mb-6">Sameer &amp; Nivedita</h1>
-      <p class="text-parchment/60 text-sm mb-8 leading-relaxed">This invitation is just for you.<br>Enter the password to continue.</p>
+      <!-- Personal welcome — filled in from the guest's own link once the server has recognised it -->
+      <div id="gateGreeting" class="mb-6" aria-live="polite">
+        <p class="text-parchment/60 text-sm mb-1">Welcome,</p>
+        <p id="gateGuestName" class="text-parchment text-2xl sm:text-3xl leading-snug break-words">&nbsp;</p>
+      </div>
+
+      <p id="gateIntro" class="text-parchment/60 text-sm mb-8 leading-relaxed">This invitation is just for you.<br><span class="invisible">Enter the password to continue.</span></p>
 
       <form id="gateForm" novalidate>
         <input
           id="gatePassword"
           type="password"
           autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
           placeholder="Password"
           aria-label="Password"
-          class="w-full bg-transparent border-0 border-b border-gold/40 text-parchment placeholder-parchment/25 text-center tracking-[0.25em] text-sm py-3 focus:outline-none focus:border-gold focus:shadow-[0_6px_24px_-6px_rgba(229,169,60,0.6)] transition-all duration-500"
+          class="invisible w-full bg-transparent border-0 border-b border-gold/40 text-parchment placeholder-parchment/25 text-center tracking-[0.25em] text-sm py-3 focus:outline-none focus:border-gold focus:shadow-[0_6px_24px_-6px_rgba(229,169,60,0.6)] transition-all duration-500"
         >
         <p id="gateError" class="hidden text-gold-soft text-xs mt-3 tracking-wide">That's not quite it — please try again.</p>
-        <button id="gateUnlockBtn" type="button" class="btn-breathe mt-8 inline-flex items-center gap-2 text-gold border border-gold/60 hover:bg-gold hover:text-forest transition-colors duration-300 rounded-full px-8 py-3 text-xs tracking-[0.2em] uppercase">
+        <button id="gateUnlockBtn" type="button" class="invisible btn-breathe mt-8 inline-flex items-center gap-2 text-gold border border-gold/60 hover:bg-gold hover:text-forest transition-colors duration-300 rounded-full px-8 py-3 text-xs tracking-[0.2em] uppercase">
           Unlock <span aria-hidden="true">&rarr;</span>
         </button>
       </form>
@@ -795,7 +816,7 @@
   // input for Enter. A 'submit' listener is kept purely as a harmless no-op
   // fallback for contexts where the form *can* submit.
   (function () {
-    const PASSWORD = "PuneChiplunPune";
+    const ACCESS_URL = "https://script.google.com/macros/s/AKfycbwPCvUpjgeJ9RXzXWEEidZStTD5-jdPzD8fK6XgdLJHKYasYNHb7Uc3LbqIHIPBJEcXsw/exec";
     const gate = document.getElementById('gate');
     const form = document.getElementById('gateForm');
     const input = document.getElementById('gatePassword');
@@ -863,44 +884,365 @@
       }, 1700 + 2000);
     }
 
-    if (safeGet('amrakatha_unlocked') === 'true') {
+    const alreadyUnlocked = safeGet('amrakatha_unlocked') === 'true';
+    if (alreadyUnlocked) {
       unlockGate(true);
     } else {
       document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
-      setTimeout(() => input.focus(), 300);
+    }
+
+    // ---------- Personal link ("bolt") + gate word ("latch") ----------
+    // Each guest has a personal link ending in ?g=<secret code>. The Google Apps
+    // Script recognises the code, checks the gate word on a new device and
+    // enforces the device limit. Nothing secret lives in this page.
+    const greeting = document.getElementById('gateGreeting');
+    const guestNameEl = document.getElementById('gateGuestName');
+    const intro = document.getElementById('gateIntro');
+    const UNLOCK_BTN_HTML = button.innerHTML;
+    const RETRY_BTN_HTML = UNLOCK_BTN_HTML.replace('Unlock', 'Try again');
+    const WORD_ERROR_TEXT = error.textContent;
+    const KEY_DEVICE = 'amrakatha_device';
+    const KEY_CODE = 'amrakatha_code';
+    const MSG = {
+      ask:     ['This invitation is just for you.', 'Enter the password to continue.'],
+      plain:   ['This invitation is just for you.'],
+      wait:    'Please wait',
+      noLink:  ['This invitation is personal.', 'Please open the link the family sent you.'],
+      badLink: ["This link isn't recognised.", 'Please contact the family for assistance.'],
+      full:    ['This link has already been used on the maximum number of devices.', 'Please contact the family for assistance.'],
+      network: ["We couldn't reach the server.", 'Please check your connection and try again.'],
+      server:  ['Something went wrong on our side.', 'Please try again in a moment, or contact the family.']
+    };
+
+    // Add &debug=1 to the address while testing and failures also show their technical reason on screen.
+    const DEBUG = /[?&]debug=1(&|$)/.test(window.location.search);
+    function why(err) { return (DEBUG && err) ? ' [' + (err.name || 'Error') + ': ' + (err.message || err) + ']' : ''; }
+
+    let guestCode = '';
+    let needWord = true;       // does this device have to type the gate word?
+    let ready = false;         // true once the server has recognised the link
+    let retryMode = false;     // the button currently reads "Try again"
+    let silentWait = false;    // music is running at volume 0 while the server decides
+
+    // Browser storage can be blocked (private mode etc.) — never let that break the gate.
+    function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ignore */ } }
+    function lsDel(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } }
+
+    function makeDeviceId() {
+      try { if (window.crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) { /* fall through */ }
+      const bytes = new Uint8Array(16);
+      if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(bytes);
+      else for (let i = 0; i < 16; i++) bytes[i] = Math.floor(Math.random() * 256);
+      return Array.prototype.map.call(bytes, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    }
+
+    // A random id that stays on this browser. The sheet counts these ids, so
+    // reopening on the same browser never uses up another device slot.
+    const deviceId = (function () {
+      let id = lsGet(KEY_DEVICE);
+      if (!id || !/^[A-Za-z0-9-]{8,64}$/.test(id)) { id = makeDeviceId(); lsSet(KEY_DEVICE, id); }
+      return id;
+    })();
+
+    // Read ?g=<code>, then remove it from the address bar so it does not linger
+    // in screenshots, copied addresses or the referrer sent to other sites.
+    function readCodeFromUrl() {
+      let c = '';
+      try {
+        const params = new URLSearchParams(window.location.search);
+        c = (params.get('g') || '').trim();
+        if (params.has('g')) {
+          params.delete('g');
+          const rest = params.toString();
+          history.replaceState(null, '', window.location.pathname + (rest ? '?' + rest : '') + window.location.hash);
+        }
+      } catch (e) { /* ignore */ }
+      return /^[A-Za-z0-9]{6,40}$/.test(c) ? c : '';
+    }
+
+    function callServer(params) {
+      const q = new URLSearchParams(params);
+      q.set('_t', Date.now());                       // defeats any caching between here and Google
+      return fetch(ACCESS_URL + '?' + q.toString(), { cache: 'no-store' }).then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.text().then(function (text) {
+          try { return JSON.parse(text); }
+          catch (e) { throw new Error('Reply was not JSON: ' + text.slice(0, 80)); }
+        });
+      });
+    }
+
+    // ----- the "Please wait" dots -----
+    // One dot, two, three, four, then back to one, until the server has answered.
+    const WAIT_DOT_COUNT = 4;
+    const WAIT_DOT_STEP_MS = 400;
+    let waitTimer = null;
+    function stopWaitDots() {
+      if (waitTimer) { clearInterval(waitTimer); waitTimer = null; }
+    }
+    function startWaitDots(dots) {
+      stopWaitDots();
+      let lit = 1;
+      function paint() {
+        dots.forEach(function (dot, i) { dot.classList.toggle('on', i < lit); });
+      }
+      paint();
+      waitTimer = setInterval(function () {
+        lit = lit % WAIT_DOT_COUNT + 1;
+        paint();
+      }, WAIT_DOT_STEP_MS);
+    }
+
+    // ----- what the card shows -----
+    function setIntro(lines) {
+      stopWaitDots();                       // every state below replaces the "Please wait" line
+      intro.textContent = '';
+      lines.forEach(function (line, i) {
+        if (i) intro.appendChild(document.createElement('br'));
+        intro.appendChild(document.createTextNode(line));
+      });
+    }
+
+    // Link not usable: a message and nothing to press.
+    function showMessage(lines) {
+      ready = false; retryMode = false;
+      greeting.classList.add('hidden');
+      setIntro(lines);
+      intro.classList.remove('mb-8');
+      input.classList.add('hidden');
+      error.classList.add('hidden');
+      button.disabled = false;
+      button.innerHTML = UNLOCK_BTN_HTML;
+      button.classList.add('hidden');
+    }
+
+    // Could not reach the server: a message and a "Try again" button.
+    function showRetry(lines) {
+      ready = false; retryMode = true;
+      greeting.classList.add('hidden');
+      setIntro(lines);
+      intro.classList.add('mb-8');
+      input.classList.add('hidden');
+      error.classList.add('hidden');
+      button.disabled = false;
+      button.innerHTML = RETRY_BTN_HTML;
+      button.classList.remove('hidden', 'invisible');
+    }
+
+    // Waiting for the server: the card keeps its shape, content is held back.
+    function showLoading() {
+      ready = false; retryMode = false;
+      greeting.classList.remove('hidden');
+      greeting.classList.remove('gate-in');
+      guestNameEl.innerHTML = '&nbsp;';
+      stopWaitDots();
+      intro.textContent = '';
+      intro.appendChild(document.createTextNode(MSG.plain[0]));
+      intro.appendChild(document.createElement('br'));
+      // Second line: "Please wait" + looping dots, laid over an invisible copy of the final line (keeps the card's size).
+      const waitLine = document.createElement('span');
+      waitLine.className = 'wait-line';
+      const ghost = document.createElement('span');
+      ghost.className = 'invisible';
+      ghost.textContent = MSG.ask[1];
+      const waitText = document.createElement('span');
+      waitText.appendChild(document.createTextNode(MSG.wait));
+      const dots = [];
+      for (let i = 0; i < WAIT_DOT_COUNT; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'wait-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        dot.textContent = '.';
+        waitText.appendChild(dot);
+        dots.push(dot);
+      }
+      waitLine.appendChild(ghost);
+      waitLine.appendChild(waitText);
+      intro.appendChild(waitLine);
+      startWaitDots(dots);
+      intro.classList.add('mb-8');
+      input.classList.remove('hidden');
+      input.classList.add('invisible');
+      error.classList.add('hidden');
+      button.classList.remove('hidden');
+      button.classList.add('invisible');
+    }
+
+    // Link recognised: welcome the guest by name.
+    function showReady(name, wordRequired) {
+      needWord = wordRequired; ready = true; retryMode = false;
+      guestNameEl.textContent = name || '';
+      greeting.classList.toggle('hidden', !name);
+      requestAnimationFrame(function () { greeting.classList.add('gate-in'); });
+      setIntro(wordRequired ? MSG.ask : MSG.plain);
+      intro.classList.toggle('mb-8', wordRequired);       // no word box: the button's own top margin is enough
+      input.classList.toggle('hidden', !wordRequired);
+      input.classList.remove('invisible');
+      button.disabled = false;
+      button.innerHTML = UNLOCK_BTN_HTML;
+      button.classList.remove('hidden', 'invisible');
+      if (wordRequired) setTimeout(function () { input.focus(); }, 300);
+    }
+
+    function rejectEntry(message, wrongWord) {
+      button.disabled = false;
+      button.innerHTML = UNLOCK_BTN_HTML;
+      error.textContent = message;
+      error.classList.remove('hidden');
+      if (wrongWord) {
+        input.classList.add('shake');
+        input.value = '';
+        setTimeout(function () { input.classList.remove('shake'); }, 500);
+        input.focus();
+      }
+    }
+
+    // ----- music -----
+    // Browsers only allow sound to start from a tap, and the answer from the
+    // server arrives a moment later. So the music is started inside the tap
+    // itself (silently where the device lets us), then either raised from the
+    // beginning once the server says yes, or stopped if it says no.
+    function startMusicInTap() {
+      if (!bgMusic) return;
+      try {
+        try { bgMusic.volume = 0; } catch (e) { /* some phones ignore volume */ }
+        silentWait = (bgMusic.volume === 0);
+        const p = bgMusic.play();
+        if (p && p.catch) p.catch(function () {});
+      } catch (e) {
+        console.error('[gate] music problem:', e);     // music must never block entry
+      }
+    }
+    function raiseMusic() {
+      if (!bgMusic) return;
+      if (silentWait) {
+        try { bgMusic.currentTime = 0; } catch (e) { /* ignore */ }
+        try { bgMusic.volume = 1; } catch (e) { /* ignore */ }
+      }
+      silentWait = false;
+      const p = bgMusic.play();                      // harmless if it is already playing
+      if (p && p.catch) p.catch(function () {});
+    }
+    function stopMusic() {
+      if (!bgMusic) return;
+      try { bgMusic.pause(); } catch (e) { /* ignore */ }
+      try { bgMusic.currentTime = 0; } catch (e) { /* ignore */ }
+      try { bgMusic.volume = 1; } catch (e) { /* ignore */ }
+      silentWait = false;
+    }
+
+    // ----- asking the server -----
+    function handleDenied(reason) {
+      if (reason === 'word') {
+        if (!needWord) {                              // the server wants the word after all
+          needWord = true;
+          setIntro(MSG.ask);
+          input.classList.remove('hidden', 'invisible');
+        }
+        rejectEntry(WORD_ERROR_TEXT, true);
+      } else if (reason === 'devices') {
+        showMessage(MSG.full);
+      } else if (reason === 'code') {
+        lsDel(KEY_CODE);
+        showMessage(MSG.badLink);
+      } else if (reason === 'busy') {
+        rejectEntry('Many guests are opening the invitation right now. Please try again in a moment.', false);
+      } else {
+        rejectEntry('Something went wrong on our side. Please try again in a moment.', false);
+      }
     }
 
     function attemptUnlock() {
-      // Case-insensitive + trimmed, so stray spaces or accidental caps don't block a correct entry.
-      if (input.value.trim().toLowerCase() === PASSWORD.toLowerCase()) {
-        safeSet('amrakatha_unlocked', 'true');
-        unlockGate(false);
-        // Started from this same user-gesture click/keypress, so it satisfies
-        // browser autoplay policy. Swallow rejection if the file can't load.
-        if (bgMusic) {
-          bgMusic.play().catch(() => {});
-        }
-      } else {
-        error.classList.remove('hidden');
-        input.classList.add('shake');
-        input.value = '';
-        setTimeout(() => input.classList.remove('shake'), 500);
-        input.focus();
+      // Guards against double-fire (button click + Enter key) while a request is in flight.
+      if (button.disabled || !ready) return;
+
+      const word = input.value;
+      if (needWord && !word.trim()) {                 // nothing typed: no need to bother the server
+        rejectEntry(WORD_ERROR_TEXT, true);
+        return;
       }
+
+      button.disabled = true;
+      button.textContent = 'Checking...';
+      error.classList.add('hidden');
+      startMusicInTap();
+
+      callServer({ action: 'enter', g: guestCode, d: deviceId, w: needWord ? word : '' })
+        .then(onEnterReply, onEnterFailure);
+    }
+
+    // The server answered.
+    function onEnterReply(data) {
+      try {
+        if (data && data.ok === true) {
+          lsSet(KEY_CODE, guestCode);
+          safeSet('amrakatha_unlocked', 'true');
+          button.disabled = false;
+          button.innerHTML = UNLOCK_BTN_HTML;
+          unlockGate(false);
+          try { raiseMusic(); } catch (e) { console.error('[gate] music problem:', e); }   // music must never block entry
+        } else {
+          stopMusic();
+          handleDenied(data && data.reason);
+        }
+      } catch (err) {
+        console.error('[gate] problem after the server answered:', err);
+        stopMusic();
+        rejectEntry('Something went wrong on our side. Please try again in a moment.' + why(err), false);
+      }
+    }
+
+    // The server could not be reached, or its reply was unusable.
+    function onEnterFailure(err) {
+      console.error('[gate] could not complete the request:', err);
+      stopMusic();
+      rejectEntry("We couldn't reach the server. Please check your connection and try again." + why(err), false);
+    }
+
+    // First thing on load: ask the server whose link this is.
+    function startGate() {
+      if (!guestCode) { showMessage(MSG.noLink); return; }
+      callServer({ action: 'hello', g: guestCode, d: deviceId }).then(function (data) {
+        try {
+          if (data && data.ok === true) {
+            lsSet(KEY_CODE, guestCode);
+            showReady(data.name, data.needWord !== false);
+          } else if (data && data.reason === 'code') {
+            lsDel(KEY_CODE);
+            showMessage(MSG.badLink);
+          } else {
+            showRetry(MSG.server);
+          }
+        } catch (err) {
+          console.error('[gate] problem after the server answered:', err);
+          showRetry(MSG.server);
+        }
+      }, function (err) {
+        console.error('[gate] could not complete the request:', err);
+        showRetry(MSG.network);
+        if (DEBUG && err) { intro.appendChild(document.createElement('br')); intro.appendChild(document.createTextNode(why(err).trim())); }
+      });
+    }
+
+    function onPrimaryAction() {
+      if (button.disabled) return;
+      if (retryMode) { showLoading(); startGate(); return; }
+      attemptUnlock();
     }
 
     // Primary path: direct click, independent of <form> submission.
     button.addEventListener('click', function (e) {
       e.preventDefault();
-      attemptUnlock();
+      onPrimaryAction();
     });
 
     // Primary path: Enter key while focused in the password field.
     input.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
-        attemptUnlock();
+        onPrimaryAction();
       }
     });
 
@@ -908,8 +1250,14 @@
     // keeps things correct if this file is ever run somewhere forms aren't blocked.
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      attemptUnlock();
+      onPrimaryAction();
     });
+
+    guestCode = readCodeFromUrl() || lsGet(KEY_CODE) || '';
+    if (!alreadyUnlocked) {
+      if (guestCode) showLoading();     // "Please wait" + looping dots while the server is asked
+      startGate();
+    }
 
     // ---------- Audio toggle ----------
     if (audioBtn && bgMusic) {
