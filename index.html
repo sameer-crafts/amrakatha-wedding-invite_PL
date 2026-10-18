@@ -240,6 +240,56 @@
      directly per scroll frame, and a lagging CSS transition would read as
      swimmy rather than tightly tied to scroll position. */
   .parallax-photo { will-change: transform; }
+
+  /* ---------- Additional guest name boxes: placeholder at half strength ----------
+     (the reset sets placeholders to full-strength grey; this halves it so it reads as a hint, not as typed text) */
+  [data-guest-name]::placeholder { opacity: 0.5; }
+
+  /* ---------- Digital pass: PDF page 1 ("the ticket") ----------
+     Built off-screen only while the PDF is being made, then photographed by html2canvas.
+     Own CSS (not Tailwind) on purpose, and nothing that html2canvas can't draw
+     (no clip-path / filters / <use> references). Size = A4 at 96 dpi (794 x 1123). */
+  #passStage { position: fixed; left: -10000px; top: 0; width: 794px; height: 1123px; overflow: hidden; pointer-events: none; z-index: -1; }
+  .pass-ticket { position: relative; width: 794px; height: 1123px; overflow: hidden; background: #FBF9F4; color: #1E3A2B; font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; }
+  .pass-top { position: absolute; left: 0; top: 0; width: 794px; height: 452px;
+    background: radial-gradient(circle at 50% 70%, rgba(78,102,89,0.55) 0%, rgba(30,58,43,0) 62%), linear-gradient(180deg, #2B5240 0%, #1E3A2B 55%, #12241A 100%); }
+  .pass-toran { position: absolute; left: 0; top: 0; width: 794px; height: 168px; }
+  .pass-brand { position: absolute; left: 0; top: 164px; width: 794px; text-align: center; }
+  .pass-tag { font-size: 12px; letter-spacing: 5px; text-transform: uppercase; color: rgba(251,249,244,0.62); }
+  .pass-kicker { margin-top: 10px; font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 44px; line-height: 1.35; color: #E5A93C; }
+  .pass-names { font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif; font-weight: 500; font-size: 60px; line-height: 1.15; color: #FBF9F4; }
+  .pass-rule { display: flex; justify-content: center; margin-top: 8px; }
+  .pass-confirm { margin-top: 10px; font-family: 'PuLaFont', 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 34px; line-height: 1.5; color: #F0C877; }
+  .pass-notch { position: absolute; top: 429px; width: 46px; height: 46px; border-radius: 50%; background: #FBF9F4; }
+  .pass-notch.l { left: -23px; } .pass-notch.r { right: -23px; }
+  .pass-perf { position: absolute; left: 40px; top: 451px; width: 714px; height: 2px; }
+  .pass-body { position: absolute; left: 0; top: 452px; width: 794px; height: 671px; box-sizing: border-box; padding: 32px 64px 0 64px; --pn: 40px; --ps: 16px; --pe: 23px; --pv: 25px; --pg: 18px; }
+  .pass-body.d2 { --pn: 34px; --ps: 14px; --pe: 20px; --pv: 22px; --pg: 14px; }
+  .pass-body.d3 { --pn: 28px; --ps: 12px; --pe: 18px; --pv: 20px; --pg: 10px; }
+  .pass-label { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; font-weight: 600; color: #B07E23; margin-bottom: 6px; }
+  .pass-name { font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif; font-weight: 500; font-size: var(--pn); line-height: 1.2; color: #1E3A2B; overflow-wrap: anywhere; }
+  .pass-row { display: flex; gap: 48px; margin-top: var(--pg); }
+  .pass-side { font-family: 'PuLaFont', 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 32px; line-height: 1.6; color: #1E3A2B; }
+  .pass-family { margin-top: 2px; font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 15px; line-height: 1.4; color: #4E6659; }
+  .pass-count { font-family: 'Playfair Display', serif; font-weight: 500; font-size: 30px; line-height: 1.4; color: #1E3A2B; }
+  .pass-count small { font-family: 'Inter', sans-serif; font-weight: 400; font-size: 14px; color: #4E6659; }
+  .pass-extra { margin-top: var(--pg); }
+  .pass-extra-text { font-size: var(--ps); line-height: 1.5; color: #1E3A2B; overflow-wrap: anywhere; }
+  .pass-events { margin-top: var(--pg); }
+  .pass-event { display: flex; gap: 14px; align-items: stretch; margin-top: 10px; }
+  .pass-event-bar { width: 4px; border-radius: 2px; background: #E5A93C; }
+  .pass-event-title { font-family: 'Playfair Display', serif; font-weight: 500; font-size: var(--pe); line-height: 1.25; color: #1E3A2B; }
+  .pass-event-date { font-size: var(--ps); line-height: 1.5; color: #4E6659; }
+  .pass-venue { margin-top: var(--pg); }
+  .pass-venue-name { font-family: 'Playfair Display', serif; font-weight: 500; font-size: var(--pv); line-height: 1.25; color: #1E3A2B; }
+  .pass-venue-addr { font-size: 13px; line-height: 1.5; color: #4E6659; margin-top: 3px; }
+  .pass-venue-map { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #B07E23; margin-top: 4px; }
+  .pass-foot { position: absolute; left: 0; bottom: 28px; width: 794px; text-align: center; }
+  .pass-foot-share { white-space: nowrap; font-family: 'PuLaFont', 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 19px; line-height: 1.5; color: #B07E23; }
+  /* html2canvas measures where each font's baseline sits by dropping a tiny 1x1 GIF next to a
+     sample word. Tailwind's reset makes every <img> display:block, which breaks that measurement
+     and makes all PDF text land too low. This rule only matches that one probe image. */
+  img[src^="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP"] { display: inline !important; }
 </style>
 </head>
 
@@ -666,6 +716,24 @@
 
     <div id="rsvpCard" class="reveal max-w-lg mx-auto glass rounded-2xl shadow-soft p-8 md:p-12">
 
+      <!-- ---------- Shown to everyone who is NOT their family's "primary member" ---------- -->
+      <div id="rsvpPrimaryOnly" class="text-center py-2 md:py-4">
+        <svg class="leaf-seal is-drawn w-8 h-auto text-gold mx-auto mb-6" viewBox="0 0 30 70" fill="none" aria-hidden="true">
+          <path pathLength="1" d="M15 2 C25 9,28 24,23 39 C20 50,21 60,15 68 C10 59,8 49,7 38 C5 23,7 9,15 2 Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path pathLength="1" d="M15 7 C18 20,19 39,15 64" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <p class="devnag text-forest text-[22px] md:text-[28px] leading-[1.8]">या मैफिलीची हजेरी घरातील एकानेच लावायची आहे.</p>
+        <div class="flex items-center justify-center gap-3 my-5 md:my-6" aria-hidden="true">
+          <span class="h-px w-10 bg-gold/50"></span>
+          <svg class="w-2.5 h-2.5 text-gold" viewBox="0 0 10 10" fill="currentColor"><path d="M5 0 L10 5 L5 10 L0 5 Z"/></svg>
+          <span class="h-px w-10 bg-gold/50"></span>
+        </div>
+        <p class="devnag text-forest text-[22px] md:text-[28px] leading-[1.8]">त्यांनी तुमची जागा राखून ठेवलीय ना? <span class="text-gold-deep">नसेल तर, त्यांना पाठवलेल्या लिंकवरून लवकर फॉर्म भरायला सांगा!</span></p>
+      </div>
+
+      <!-- Everything interactive lives in here; hidden for guests who are not the primary member -->
+      <div id="rsvpInteractive" class="hidden">
+
       <!-- ---------- STEP 1: choose a side ---------- -->
       <div id="rsvpChoice" class="text-center transition-all duration-500 ease-out">
         <p class="font-serif italic text-forest text-xl md:text-2xl mb-2">Join us from&hellip;</p>
@@ -761,6 +829,12 @@
               <option value="8">8</option>
             </select>
             <p id="guests-not-applicable" class="hidden w-full border-b-2 border-forest/10 text-forest-muted/60 py-2 italic text-sm">Not Applicable</p>
+
+            <!-- One required box per additional guest — created by the script below (count = guests - 1) -->
+            <div id="guest-names-wrap" class="hidden mt-6">
+              <span class="block text-[11px] tracking-[0.2em] uppercase text-forest-muted mb-2">Additional Guest Names</span>
+              <div id="guest-names-list" class="space-y-3"></div>
+            </div>
           </div>
 
           <button type="submit" class="w-full bg-gold hover:bg-gold-deep text-forest hover:text-parchment transition-colors duration-300 rounded-full py-3.5 text-xs tracking-[0.25em] uppercase font-medium">
@@ -775,8 +849,19 @@
           </svg>
           <p class="font-serif text-xl text-forest mb-1">Thank you!</p>
           <p class="devnag text-forest-muted text-sm">तुमचा प्रतिसाद आम्हाला मिळाला.</p>
+
+          <!-- Shown by the pass script only for guests who are attending -->
+          <div id="passActions" class="hidden mt-8">
+            <button type="button" id="downloadPassBtn" class="inline-flex items-center justify-center gap-2 text-xs tracking-[0.2em] uppercase border border-gold text-forest hover:bg-gold transition-colors rounded-full px-6 py-3 disabled:opacity-60 disabled:cursor-wait">
+              <svg class="w-4 h-4" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
+              <span id="downloadPassLabel">Download Invitation</span>
+            </button>
+            <p id="passStatus" role="status" aria-live="polite" class="text-forest-muted text-xs mt-3 min-h-[1rem]"></p>
+          </div>
         </div>
       </div>
+
+      </div><!-- /#rsvpInteractive -->
 
     </div>
   </section>
@@ -913,6 +998,7 @@
     const WORD_ERROR_TEXT = error.textContent;
     const KEY_DEVICE = 'amrakatha_device';
     const KEY_CODE = 'amrakatha_code';
+    const KEY_PRIMARY = 'amrakatha_primary';   // "yes" / "no": may this guest see the RSVP form? (kept for the browser session)
     const MSG = {
       ask:     ['This invitation is just for you.', 'Enter the password to continue.'],
       plain:   ['This invitation is just for you.'],
@@ -933,6 +1019,19 @@
     let ready = false;         // true once the server has recognised the link
     let retryMode = false;     // the button currently reads "Try again"
     let silentWait = false;    // music is running at volume 0 while the server decides
+
+    // Tells the RSVP section whether this guest is their family's "primary member"
+    // (the sheet's "Primary member" = Yes). Only the flag from the server's "enter"
+    // answer is used, and anything other than a clear true counts as "no".
+    // Kept for the browser session too, because a guest who is already unlocked
+    // skips the server completely on a reload. Can never block entry.
+    function announcePrimary(flag) {
+      try {
+        window.__amraPrimary = flag;
+        safeSet(KEY_PRIMARY, flag ? 'yes' : 'no');
+        document.dispatchEvent(new CustomEvent('amrakatha:primary', { detail: flag }));
+      } catch (e) { console.error('[gate] could not pass on the RSVP flag:', e); }
+    }
 
     // Browser storage can be blocked (private mode etc.) — never let that break the gate.
     function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -1192,6 +1291,7 @@
         if (data && data.ok === true) {
           lsSet(KEY_CODE, guestCode);
           safeSet('amrakatha_unlocked', 'true');
+          announcePrimary(data.canRSVP === true);
           button.disabled = false;
           button.innerHTML = UNLOCK_BTN_HTML;
           unlockGate(false);
@@ -1518,6 +1618,84 @@
     attendingNo.addEventListener('change', applyAttendance);
   })();
 
+  // ---------- RSVP: one required name box for every additional guest ----------
+  // "Number of Guests" includes the person filling the form, so choosing 3 shows
+  // exactly 2 boxes (Guest 1, Guest 2). The boxes are created / removed here; the
+  // submit handler below simply reads whatever [data-guest-name] boxes exist.
+  (function () {
+    const attendingYes = document.getElementById('attending-yes');
+    const guestCount = document.getElementById('guest-count');
+    const wrap = document.getElementById('guest-names-wrap');
+    const list = document.getElementById('guest-names-list');
+    const form = document.getElementById('rsvpForm');
+    if (!attendingYes || !guestCount || !wrap || !list || !form) return;
+
+    // Same look as the other underlined inputs in this form.
+    const BOX_CLASS = 'w-full bg-transparent border-b-2 border-forest/20 focus:border-gold text-forest py-2 focus:outline-none transition-colors';
+
+    function makeBox(n) {
+      const box = document.createElement('input');
+      box.type = 'text';
+      box.className = BOX_CLASS;
+      box.placeholder = 'Guest ' + n + ' name';       // plain placeholder ("Guest 1 name"): disappears as soon as they type
+      box.setAttribute('aria-label', 'Guest ' + n + ' name');
+      box.required = true;                            // strict: the form cannot be sent with a blank box
+      box.pattern = '.*\\S.*';                        // ...and spaces alone do not count as a name
+      box.title = 'Please enter the name of guest ' + n + '.';
+      box.maxLength = 60;
+      box.autocomplete = 'off';
+      box.autocapitalize = 'words';
+      box.setAttribute('data-guest-name', '');
+      return box;
+    }
+
+    // How many boxes are needed right now: guests minus the person filling the form
+    // (and none at all if they are not attending).
+    function boxesNeeded() {
+      if (!attendingYes.checked) return 0;
+      const n = parseInt(guestCount.value, 10);
+      return n > 1 ? n - 1 : 0;
+    }
+
+    function render() {
+      const need = boxesNeeded();
+      while (list.children.length < need) list.appendChild(makeBox(list.children.length + 1));   // grow
+      while (list.children.length > need) list.removeChild(list.lastElementChild);                 // shrink (drops the last boxes)
+      wrap.classList.toggle('hidden', need === 0);
+    }
+
+    guestCount.addEventListener('change', render);
+    // These listeners are added after the attendance logic's own, so by the time
+    // they run the guest-count field has already been reset / hidden if needed.
+    document.getElementById('attending-yes').addEventListener('change', render);
+    const attendingNo = document.getElementById('attending-no');
+    if (attendingNo) attendingNo.addEventListener('change', render);
+    form.addEventListener('reset', function () { setTimeout(render, 0); });
+    render();
+  })();
+
+  // ---------- RSVP: only the family's "primary member" sees the form ----------
+  // Everyone else gets the message card instead (they still see the whole website).
+  // The answer comes from the gate (see announcePrimary): live when the guest unlocks,
+  // or from the browser session when they reload. If nothing says "yes", the form stays hidden.
+  // This hides the form on the page; it is not a security lock (see the notes that came with this file).
+  (function () {
+    const interactive = document.getElementById('rsvpInteractive');
+    const notice = document.getElementById('rsvpPrimaryOnly');
+    if (!interactive || !notice) return;
+
+    function show(allowed) {
+      interactive.classList.toggle('hidden', !allowed);
+      notice.classList.toggle('hidden', allowed);
+    }
+    function remembered() {
+      try { return sessionStorage.getItem('amrakatha_primary') === 'yes'; } catch (e) { return false; }
+    }
+
+    show(typeof window.__amraPrimary === 'boolean' ? window.__amraPrimary : remembered());
+    document.addEventListener('amrakatha:primary', function (e) { show(e.detail === true); });
+  })();
+
   // ---------- RSVP: submit to Cloudflare Worker → Apps Script → Sheet ----------
   (function () {
     const WORKER_URL = 'https://amrakatha-rsvp.sam1994modak.workers.dev/';
@@ -1560,6 +1738,16 @@
       }
     }
 
+    // NEW: joins the additional-guest boxes into one string for Column I.
+    // "None" = attending alone, "N/A" = not attending (so the cell is never blank).
+    function guestNamesText() {
+      const names = Array.prototype.slice.call(form.querySelectorAll('[data-guest-name]'))
+        .map(function (box) { return box.value.replace(/,/g, ' ').replace(/\s+/g, ' ').trim(); })
+        .filter(Boolean);
+      if (names.length) return names.join(', ');
+      return form.querySelector('#attending-yes').checked ? 'None' : 'N/A';
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -1580,7 +1768,11 @@
         // it's simply absent from FormData when disabled (attendance = "no").
         // Sending an explicit 'N/A' keeps the Sheet column from getting a
         // blank/undefined value in that row.
-        guestCount: formData.get('guestCount') || 'N/A'
+        guestCount: formData.get('guestCount') || 'N/A',
+        // NEW (Column I): the separate "Guest 1", "Guest 2"... boxes joined into one
+        // comma-separated cell, e.g. "Rahul, Anjali". Commas typed inside a name are
+        // swapped for a space so one name can never split into two.
+        additionalGuestNames: guestNamesText()
       };
 
       submitBtn.disabled = true;
@@ -1599,6 +1791,12 @@
           if (!data || data.success !== true) {
             throw new Error((data && data.error) || 'Unknown error from server');
           }
+          // NEW: the Worker answers success:true whenever Apps Script replied at all, and puts
+          // Apps Script's own reply under data.data. If that inner reply says success:false
+          // (lock timeout, missing tab, ...) the row was NOT saved, so do not show "Thank you!".
+          if (data.data && typeof data.data === 'object' && data.data.success === false) {
+            throw new Error(data.data.error || 'The RSVP could not be saved');
+          }
           playSuccessAnimations();
         })
         .catch(function (err) {
@@ -1607,6 +1805,414 @@
           alert('Something went wrong sending your RSVP. Please try again in a moment.\n\n(' + err.message + ')');
         });
     });
+  })();
+
+  // ---------- RSVP: "Download Invitation" — a 2-page PDF made entirely in the browser ----------
+  // Page 1 = the personal ticket (built from the answers just submitted + the fixed event details).
+  // Page 2 = the formal invitation card image for the side they chose (वरपक्ष / वधूपक्ष).
+  // Nothing is sent anywhere: jsPDF + html2canvas are free libraries loaded from a CDN
+  // only when needed, and the PDF is created on the guest's own phone / computer.
+  (function () {
+    const form = document.getElementById('rsvpForm');
+    const thanks = document.getElementById('rsvpThanks');
+    const actions = document.getElementById('passActions');
+    const btn = document.getElementById('downloadPassBtn');
+    const btnLabel = document.getElementById('downloadPassLabel');
+    const statusEl = document.getElementById('passStatus');
+    const attendingYes = document.getElementById('attending-yes');
+    if (!form || !thanks || !actions || !btn || !btnLabel || !statusEl || !attendingYes) return;
+
+    // ================= EDIT HERE LATER =================
+    const PASS = {
+      // Page 2 images — put your final designs next to index.html and keep (or change) these names.
+      inviteImages: { 'वरपक्ष': 'varapaksh-invite.jpg', 'वधूपक्ष': 'vadhupaksh-invite.jpg' },
+      // Colour of the stand-in page used if an image is missing or the browser cannot read it.
+      placeholderColour: { 'वरपक्ष': '#1E3A2B', 'वधूपक्ष': '#B07E23' },
+      family: { 'वरपक्ष': 'मोडक कुटुंबीय', 'वधूपक्ष': 'केतकर कुटुंबीय' },
+      events: {
+        sangeet: { title: 'Sangeet & Sakharpuda', when: '10 March 2027 · time to follow' },
+        wedding: { title: 'Wedding Ceremony', when: '11 March 2027 · time to follow' }
+      },
+      venue: {
+        name: 'Amraban Resort',
+        address: 'Parshuram Bus Stop to Parshuram Temple Road, Near Mumbai Goa Highway, Village - Parashuram, Taluka, Parshuram, Dhamandevi, Maharashtra 415605',
+        mapUrl: 'https://maps.app.goo.gl/RuuHmHBUAErdaWzMA'
+      },
+      // Free libraries, exact versions. Each list is tried in order (second = backup CDN).
+      libs: {
+        jspdf: ['https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js', 'https://unpkg.com/jspdf@4.2.1/dist/jspdf.umd.min.js'],
+        html2canvas: ['https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js', 'https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js']
+      }
+    };
+    // ===================================================
+
+    const PAGE_W_MM = 210, PAGE_H_MM = 297;      // A4
+    const STAGE_W = 794, STAGE_H = 1123;         // A4 at 96 dpi (the ticket is designed at this size)
+    const MARATHI_SIDES = ['वरपक्ष', 'वधूपक्ष'];
+
+    // ---------- loading the two libraries (only when a guest who is attending reaches this screen) ----------
+    function loadScript(urls) {
+      return new Promise(function (resolve, reject) {
+        let i = 0;
+        (function next() {
+          if (i >= urls.length) { reject(new Error('Could not load ' + urls[0])); return; }
+          const s = document.createElement('script');
+          s.src = urls[i++];
+          s.onload = function () { resolve(); };
+          s.onerror = function () { s.remove(); next(); };
+          document.head.appendChild(s);
+        })();
+      });
+    }
+    let libsPromise = null;
+    function ensureLibs() {
+      if (window.jspdf && window.jspdf.jsPDF && window.html2canvas) return Promise.resolve();
+      if (!libsPromise) {
+        libsPromise = Promise.all([
+          (window.jspdf && window.jspdf.jsPDF) ? Promise.resolve() : loadScript(PASS.libs.jspdf),
+          window.html2canvas ? Promise.resolve() : loadScript(PASS.libs.html2canvas)
+        ]).then(function () {
+          if (!(window.jspdf && window.jspdf.jsPDF && window.html2canvas)) throw new Error('PDF libraries did not start');
+        }).catch(function (err) { libsPromise = null; throw err; });   // allow a retry on the next tap
+      }
+      return libsPromise;
+    }
+
+    // ---------- what the guest just submitted (read from the form, which is only hidden, not cleared) ----------
+    function oneLine(v) { return String(v == null ? '' : v).replace(/\s+/g, ' ').trim(); }
+    function readPassData() {
+      const val = function (id) { const e = document.getElementById(id); return e ? e.value : ''; };
+      const extras = Array.prototype.slice.call(form.querySelectorAll('[data-guest-name]'))
+        .map(function (b) { return oneLine(b.value.replace(/,/g, ' ')); }).filter(Boolean);
+      const events = val('events-dropdown');
+      return {
+        first: oneLine(val('firstName')),
+        last: oneLine(val('lastName')),
+        side: val('guestSide'),
+        count: parseInt(val('guest-count'), 10) || 1,
+        extras: extras,
+        eventKeys: events === 'Both Days' ? ['sangeet', 'wedding'] : ['wedding']
+      };
+    }
+
+    // ---------- fonts: make sure every face used by the ticket is really loaded before drawing ----------
+    const FONT_TESTS = [
+      ['500 60px "Playfair Display"', 'Sameer & Nivedita Sangeet Sakharpuda Wedding Ceremony 0123456789'],
+      ['44px "Tiro Devanagari Marathi"', 'आम्रकथा सप्रेम निमंत्रण मोडक केतकर कुटुंबीय'],
+      ['34px PuLaFont', 'तुमची हजेरी नोंदली गेली आहे. वरपक्ष वधूपक्ष'],
+      ['400 16px "Inter"', 'Guest Joining from Venue 0123456789'],
+      ['600 11px "Inter"', 'GUEST JOINING FROM HEADCOUNT']
+    ];
+    function loadFonts(doc, extraText) {
+      const tests = FONT_TESTS.concat([['500 42px "Playfair Display"', extraText || ''], ['400 20px "Tiro Devanagari Marathi"', extraText || '']]);
+      return Promise.all(tests.map(function (t) { return doc.fonts.load(t[0], t[1]).catch(function () {}); }))
+        .then(function () { return doc.fonts.ready; });
+    }
+
+    // ---------- the toran: marigold garlands + hanging mango leaves (self-contained SVG, no <use>) ----------
+    function r1(n) { return Math.round(n * 10) / 10; }
+    function marigold(cx, cy, r, k) {
+      const outer = (k % 2) ? '#E5A93C' : '#E08A1E';
+      let s = '';
+      for (let a = 0; a < 360; a += 30) s += '<ellipse cx="' + r1(cx) + '" cy="' + r1(cy - r * 0.58) + '" rx="' + r1(r * 0.3) + '" ry="' + r1(r * 0.46) + '" fill="' + outer + '" transform="rotate(' + a + ' ' + r1(cx) + ' ' + r1(cy) + ')"/>';
+      for (let a = 15; a < 360; a += 45) s += '<ellipse cx="' + r1(cx) + '" cy="' + r1(cy - r * 0.36) + '" rx="' + r1(r * 0.22) + '" ry="' + r1(r * 0.34) + '" fill="#F0C877" transform="rotate(' + a + ' ' + r1(cx) + ' ' + r1(cy) + ')"/>';
+      return s + '<circle cx="' + r1(cx) + '" cy="' + r1(cy) + '" r="' + r1(r * 0.2) + '" fill="#B07E23"/>';
+    }
+    function mangoLeaf(x, y, len, wid) {          // hangs from (x, y), tip pointing down
+      const w = wid / 2;
+      let s = '<path d="M' + x + ' ' + y + ' C' + r1(x + w) + ' ' + r1(y + len * 0.28) + ' ' + r1(x + w * 0.8) + ' ' + r1(y + len * 0.76) + ' ' + x + ' ' + r1(y + len) +
+              ' C' + r1(x - w * 0.8) + ' ' + r1(y + len * 0.76) + ' ' + r1(x - w) + ' ' + r1(y + len * 0.28) + ' ' + x + ' ' + y + ' Z" fill="#456F54"/>';
+      s += '<path d="M' + x + ' ' + y + ' C' + r1(x + w) + ' ' + r1(y + len * 0.28) + ' ' + r1(x + w * 0.8) + ' ' + r1(y + len * 0.76) + ' ' + x + ' ' + r1(y + len) + ' Z" fill="#5E8E6D" fill-opacity="0.75"/>';
+      s += '<path d="M' + x + ' ' + (y + 4) + ' L' + x + ' ' + r1(y + len - 6) + '" stroke="#B9D6C1" stroke-opacity="0.8" stroke-width="1.4" fill="none"/>';
+      [0.26, 0.44, 0.62].forEach(function (f) {
+        const vy = y + len * f, dx = w * 0.72 * (1 - f * 0.45);
+        s += '<path d="M' + x + ' ' + r1(vy) + ' L' + r1(x + dx) + ' ' + r1(vy + len * 0.09) + ' M' + x + ' ' + r1(vy) + ' L' + r1(x - dx) + ' ' + r1(vy + len * 0.09) + '" stroke="#B9D6C1" stroke-opacity="0.45" stroke-width="1" fill="none"/>';
+      });
+      return s;
+    }
+    function toranSvg() {
+      const ROD_Y = 9, ANCHORS = 11, X0 = 40, STEP = (STAGE_W - 80) / (ANCHORS - 1), SAG = 30, FLOWERS = 6;
+      let s = '<svg xmlns="http://www.w3.org/2000/svg" width="' + STAGE_W + '" height="168" viewBox="0 0 ' + STAGE_W + ' 168">';
+      s += '<path d="M0 ' + ROD_Y + ' H' + STAGE_W + '" stroke="#E5A93C" stroke-width="3" stroke-linecap="round"/>';
+      let k = 0;
+      for (let i = 0; i < ANCHORS - 1; i++) {                        // garland swags between the anchors
+        const xa = X0 + i * STEP, xb = xa + STEP, mid = (xa + xb) / 2, cy = ROD_Y + 2 * SAG;
+        s += '<path d="M' + r1(xa) + ' ' + ROD_Y + ' Q' + r1(mid) + ' ' + cy + ' ' + r1(xb) + ' ' + ROD_Y + '" stroke="#F0C877" stroke-opacity="0.7" stroke-width="1.5" fill="none"/>';
+        for (let j = 1; j <= FLOWERS; j++) {
+          const t = j / (FLOWERS + 1), u = 1 - t;
+          s += marigold(u * u * xa + 2 * u * t * mid + t * t * xb, u * u * ROD_Y + 2 * u * t * cy + t * t * ROD_Y, 8.5, k++);
+        }
+        const ty = ROD_Y + SAG;                                      // a small marigold tassel at the lowest point
+        s += '<path d="M' + r1(mid) + ' ' + (ty + 6) + ' V' + (ty + 30) + '" stroke="#F0C877" stroke-opacity="0.7" stroke-width="1.2"/>' + marigold(mid, ty + 36, 7, k++);
+      }
+      for (let i = 0; i < ANCHORS; i++) {                            // hanging mango leaves, long and short in turn
+        const x = r1(X0 + i * STEP), long = i % 2 === 0;
+        s += mangoLeaf(x, 28, long ? 104 : 80, long ? 40 : 34) + marigold(x, 28, 11, k++);
+      }
+      s += marigold(14, ROD_Y, 8, 0) + marigold(STAGE_W - 14, ROD_Y, 8, 1);
+      return s + '</svg>';
+    }
+    function ruleSvg(w) {
+      const h = Math.round(w * 0.16);
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 100 16" fill="none" stroke="#E5A93C" stroke-opacity="0.75" stroke-width="1">' +
+             '<line x1="0" y1="8" x2="38" y2="8"/><path d="M50 2 C55 2 59 6 59 8 C59 10 55 14 50 14 C45 14 41 10 41 8 C41 6 45 2 50 2 Z"/><line x1="62" y1="8" x2="100" y2="8"/></svg>';
+    }
+    function perfSvg() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="714" height="2" viewBox="0 0 714 2"><line x1="0" y1="1" x2="714" y2="1" stroke="#1E3A2B" stroke-opacity="0.3" stroke-width="2" stroke-dasharray="9 7"/></svg>';
+    }
+
+    // ---------- building the ticket (page 1) ----------
+    // Guest-typed text is only ever set with textContent, never as HTML.
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    }
+    function withSvg(cls, svg) { const d = el('div', cls); d.innerHTML = svg; return d; }   // svg strings above are fixed, never user text
+
+    function buildTicket(d) {
+      const t = el('div', 'pass-ticket');
+
+      const top = el('div', 'pass-top');
+      top.appendChild(withSvg('pass-toran', toranSvg()));
+      const brand = el('div', 'pass-brand');
+      brand.appendChild(el('div', 'pass-tag', 'Invitation Pass'));
+      brand.appendChild(el('div', 'pass-kicker', 'आम्रकथा'));
+      brand.appendChild(el('div', 'pass-names', 'Sameer & Nivedita'));
+      brand.appendChild(withSvg('pass-rule', ruleSvg(170)));
+      brand.appendChild(el('div', 'pass-confirm', 'तुमची हजेरी नोंदली गेली आहे.'));
+      top.appendChild(brand);
+      t.appendChild(top);
+      t.appendChild(el('div', 'pass-notch l'));
+      t.appendChild(el('div', 'pass-notch r'));
+      t.appendChild(withSvg('pass-perf', perfSvg()));
+
+      const body = el('div', 'pass-body');
+      body.appendChild(el('div', 'pass-label', 'Guest'));
+      body.appendChild(el('div', 'pass-name', (d.first + ' ' + d.last).trim() || 'Dear Guest'));
+
+      const row = el('div', 'pass-row');
+      const colA = el('div');
+      colA.appendChild(el('div', 'pass-label', 'Joining from'));
+      colA.appendChild(el('div', 'pass-side', d.side || ''));
+      if (PASS.family[d.side]) colA.appendChild(el('div', 'pass-family', PASS.family[d.side]));
+      const colB = el('div');
+      colB.appendChild(el('div', 'pass-label', 'Headcount'));
+      const cnt = el('div', 'pass-count', String(d.count) + ' ');
+      cnt.appendChild(el('small', '', d.count === 1 ? 'guest' : 'guests (including you)'));
+      colB.appendChild(cnt);
+      row.appendChild(colA); row.appendChild(colB);
+      body.appendChild(row);
+
+      if (d.extras.length) {
+        const ex = el('div', 'pass-extra');
+        ex.appendChild(el('div', 'pass-label', 'Additional guests'));
+        ex.appendChild(el('div', 'pass-extra-text', d.extras.join(', ')));
+        body.appendChild(ex);
+      }
+
+      const evs = el('div', 'pass-events');
+      evs.appendChild(el('div', 'pass-label', d.eventKeys.length > 1 ? 'Your events' : 'Your event'));
+      d.eventKeys.forEach(function (k) {
+        const card = el('div', 'pass-event');
+        card.appendChild(el('div', 'pass-event-bar'));
+        const txt = el('div');
+        txt.appendChild(el('div', 'pass-event-title', PASS.events[k].title));
+        txt.appendChild(el('div', 'pass-event-date', PASS.events[k].when));
+        card.appendChild(txt);
+        evs.appendChild(card);
+      });
+      body.appendChild(evs);
+
+      const ven = el('div', 'pass-venue');
+      ven.appendChild(el('div', 'pass-label', 'Venue'));
+      ven.appendChild(el('div', 'pass-venue-name', PASS.venue.name));
+      ven.appendChild(el('div', 'pass-venue-addr', PASS.venue.address));
+      ven.appendChild(el('div', 'pass-venue-map', 'Tap here for the map →'));
+      body.appendChild(ven);
+      t.appendChild(body);
+
+      const foot = el('div', 'pass-foot');
+      // Asks the guest to forward this invitation card to their family (family members who are not the
+      // "primary member" do not get the RSVP form, so this PDF is how the card reaches them).
+      foot.appendChild(el('div', 'pass-foot-share', "या 'आम्रकथे'ची ही निमंत्रण पत्रिका आपल्या घरच्यांनाही नक्की शेअर पाठवा!"));
+      t.appendChild(foot);
+
+      return { ticket: t, body: body, venue: ven, foot: foot };
+    }
+
+    // If a long name / many guests would run into the footer, step the text size down (3 steps).
+    function fitTicket(parts) {
+      ['', 'd2', 'd3'].some(function (cls) {
+        parts.body.className = 'pass-body' + (cls ? ' ' + cls : '');
+        return parts.venue.getBoundingClientRect().bottom <= parts.foot.getBoundingClientRect().top - 10;
+      });
+    }
+
+    // ---------- page 2: the formal invitation image for the chosen side ----------
+    function blobToDataUrl(blob) {
+      return new Promise(function (resolve, reject) {
+        const fr = new FileReader();
+        fr.onload = function () { resolve(fr.result); };
+        fr.onerror = function () { reject(fr.error); };
+        fr.readAsDataURL(blob);
+      });
+    }
+    function imageSize(dataUrl) {
+      return new Promise(function (resolve, reject) {
+        const im = new Image();
+        im.onload = function () { resolve({ w: im.naturalWidth, h: im.naturalHeight }); };
+        im.onerror = function () { reject(new Error('image could not be read')); };
+        im.src = dataUrl;
+      });
+    }
+    // A plain coloured A4 page, drawn in code — used when the real image is missing or unreadable.
+    function placeholderPage(side) {
+      const c = document.createElement('canvas');
+      c.width = 1240; c.height = 1754;
+      const g = c.getContext('2d');
+      g.fillStyle = PASS.placeholderColour[side] || '#4E6659';
+      g.fillRect(0, 0, c.width, c.height);
+      g.strokeStyle = '#E5A93C'; g.lineWidth = 6; g.strokeRect(60, 60, c.width - 120, c.height - 120);
+      g.textAlign = 'center'; g.fillStyle = '#FBF9F4';
+      g.font = '120px PuLaFont, "Tiro Devanagari Marathi", serif';
+      g.fillText(side || '', c.width / 2, c.height / 2 - 20);
+      g.font = '500 44px "Playfair Display", serif';
+      g.fillText('Invitation card coming soon', c.width / 2, c.height / 2 + 90);
+      return { dataUrl: c.toDataURL('image/jpeg', 0.9), format: 'JPEG', w: c.width, h: c.height };
+    }
+    function loadInvitePage(side) {
+      const url = PASS.inviteImages[side];
+      if (!url) return Promise.resolve(placeholderPage(side));
+      return fetch(url, { cache: 'no-cache' })
+        .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.blob(); })
+        .then(function (blob) {
+          const type = (blob.type || '').toLowerCase();
+          const format = type === 'image/png' ? 'PNG' : (type === 'image/jpeg' ? 'JPEG' : null);
+          if (!format) throw new Error('unsupported image type ' + type);
+          // The original file goes into the PDF untouched (no re-compression), so it stays as sharp as you made it.
+          return blobToDataUrl(blob).then(function (dataUrl) {
+            return imageSize(dataUrl).then(function (sz) { return { dataUrl: dataUrl, format: format, w: sz.w, h: sz.h }; });
+          });
+        })
+        .catch(function (err) {
+          console.warn('[pass] using a plain stand-in for page 2 (' + url + '):', err);
+          return placeholderPage(side);
+        });
+    }
+
+    // ---------- making the PDF ----------
+    function nextFrames(n) {
+      return new Promise(function (resolve) {
+        (function tick(i) { if (i <= 0) resolve(); else requestAnimationFrame(function () { tick(i - 1); }); })(n);
+      });
+    }
+
+    function makePdf(d) {
+      return ensureLibs().then(function () {
+        return Promise.all([loadFonts(document, d.first + ' ' + d.last + ' ' + d.extras.join(' ')), loadInvitePage(d.side)]);
+      }).then(function (res) {
+        const invite = res[1];
+        const stage = document.createElement('div');
+        stage.id = 'passStage';
+        stage.setAttribute('aria-hidden', 'true');
+        const parts = buildTicket(d);
+        stage.appendChild(parts.ticket);
+        document.body.appendChild(stage);
+
+        let linkBox = null;
+        fitTicket(parts);
+        return nextFrames(2).then(function () {
+          const tr = parts.ticket.getBoundingClientRect(), vr = parts.venue.getBoundingClientRect();
+          linkBox = { x: vr.left - tr.left, y: vr.top - tr.top, w: vr.width, h: vr.height };
+          return window.html2canvas(parts.ticket, {
+            scale: 2, backgroundColor: '#FBF9F4', useCORS: true, logging: false,
+            width: STAGE_W, height: STAGE_H, windowWidth: STAGE_W, windowHeight: STAGE_H, scrollX: 0, scrollY: 0,
+            onclone: function (doc) {
+              const s = doc.getElementById('passStage');      // bring the off-screen copy into view for the snapshot
+              if (s) { s.style.left = '0px'; s.style.top = '0px'; s.style.zIndex = '0'; }
+              return loadFonts(doc, d.first + ' ' + d.last + ' ' + d.extras.join(' '));
+            }
+          });
+        }).then(function (canvas) {
+          stage.remove();
+          const jsPDF = window.jspdf.jsPDF;
+          const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+          pdf.setProperties({ title: 'Amrakatha - Wedding Invitation', subject: 'Sameer & Nivedita', author: 'Sameer & Nivedita' });
+
+          // page 1: the ticket (full page) + the venue block is a tap-through link to the map
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, PAGE_W_MM, PAGE_H_MM, undefined, 'FAST');
+          const k = PAGE_W_MM / STAGE_W;
+          pdf.link(linkBox.x * k, linkBox.y * k, linkBox.w * k, linkBox.h * k, { url: PASS.venue.mapUrl });
+
+          // page 2: the invitation card, centred, never stretched or cropped
+          pdf.addPage('a4', 'portrait');
+          pdf.setFillColor(251, 249, 244);
+          pdf.rect(0, 0, PAGE_W_MM, PAGE_H_MM, 'F');
+          let w = PAGE_W_MM, h = PAGE_H_MM;
+          const imgRatio = invite.w / invite.h, pageRatio = PAGE_W_MM / PAGE_H_MM;
+          if (Math.abs(imgRatio / pageRatio - 1) > 0.02) {           // not (almost) A4: fit inside the page
+            if (imgRatio > pageRatio) { h = PAGE_W_MM / imgRatio; } else { w = PAGE_H_MM * imgRatio; }
+          }
+          pdf.addImage(invite.dataUrl, invite.format, (PAGE_W_MM - w) / 2, (PAGE_H_MM - h) / 2, w, h, undefined, 'FAST');
+          return pdf.output('blob');
+        }).catch(function (err) {
+          const s = document.getElementById('passStage'); if (s) s.remove();
+          throw err;
+        });
+      });
+    }
+
+    function safeFileName(d) {
+      const base = (d.first || 'Guest').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      return 'Amrakatha-Invitation-' + (base || 'Guest') + '.pdf';
+    }
+
+    let lastUrl = null;
+    function setStatus(text, linkUrl, linkText) {
+      statusEl.textContent = text;
+      if (linkUrl) {
+        const a = document.createElement('a');
+        a.href = linkUrl; a.target = '_blank'; a.rel = 'noopener';
+        a.className = 'underline decoration-gold underline-offset-2 hover:text-gold';
+        a.textContent = linkText;
+        statusEl.appendChild(document.createTextNode(' '));
+        statusEl.appendChild(a);
+      }
+    }
+
+    btn.addEventListener('click', function () {
+      if (btn.disabled) return;
+      const d = readPassData();
+      btn.disabled = true;
+      btnLabel.textContent = 'Preparing your invitation…';
+      setStatus('');
+      makePdf(d).then(function (blob) {
+        if (lastUrl) URL.revokeObjectURL(lastUrl);
+        lastUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = lastUrl; a.download = safeFileName(d);
+        document.body.appendChild(a); a.click(); a.remove();
+        setStatus('Your invitation is ready. If it did not download,', lastUrl, 'open it here.');
+      }).catch(function (err) {
+        console.error('[pass] could not make the PDF:', err);
+        setStatus('We could not prepare your invitation just now. Please check your connection and try again.');
+      }).then(function () {
+        btn.disabled = false;
+        btnLabel.textContent = 'Download Invitation';
+      });
+    });
+
+    // Show the button only for guests who are attending, once the Thank You screen is up.
+    // (Watching the screen avoids touching the submit code at all.)
+    function onThanksShown() {
+      if (thanks.classList.contains('hidden') || !attendingYes.checked) return;
+      actions.classList.remove('hidden');
+      ensureLibs().catch(function () { /* will retry when the button is tapped */ });   // warm up in the background
+    }
+    new MutationObserver(onThanksShown).observe(thanks, { attributes: true, attributeFilter: ['class'] });
+    onThanksShown();
   })();
 </script>
 
