@@ -80,8 +80,11 @@
   .wait-dot.on { opacity: 1; }
 
   /* Gentle scroll-cue pulse (deliberately not a bounce) */
-  @keyframes softpulse { 0%,100% { opacity: 0.35; transform: translateY(0); } 50% { opacity: 0.9; transform: translateY(6px); } }
+  @keyframes softpulse { 0%,100% { opacity: 0.7; transform: translateY(0); } 50% { opacity: 1; transform: translateY(6px); } }
   .softpulse { animation: softpulse 2.6s ease-in-out infinite; }
+
+  /* Hero text: a soft, wide dark halo (no visible box) so the gold lines stay readable over the leaves. */
+  .hero-halo { text-shadow: 0 1px 2px rgba(0,0,0,0.55), 0 0 14px rgba(0,0,0,0.45); }
 
   /* Custom scrollbar, subtle */
   ::-webkit-scrollbar { width: 10px; }
@@ -460,8 +463,8 @@
      width; the link itself opts back in. -->
 <div id="scrollCue" class="fixed bottom-6 inset-x-0 z-40 flex justify-center text-white mix-blend-difference pointer-events-none transition-opacity duration-700 ease-out">
   <a href="#story" id="scrollCueLink" class="softpulse pointer-events-auto flex flex-col items-center" aria-label="Scroll to our story">
-    <span class="text-[10px] tracking-[0.3em] uppercase mb-2">Scroll</span>
-    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
+    <span class="text-[11px] tracking-[0.3em] uppercase mb-2">Scroll</span>
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m0 0l-6-6m6 6l6-6"/></svg>
   </a>
 </div>
 
@@ -482,7 +485,9 @@
   <!-- ---------- HERO ---------- -->
   <section id="hero" class="relative h-[100dvh] w-full overflow-hidden">
     <img id="heroImg" src="Native_place_1.jpg" alt="Chiplun homeland" class="hero-img absolute inset-0 w-full h-full object-cover object-bottom">
-    <div class="absolute inset-0 bg-black/40"></div>
+    <div class="absolute inset-0 bg-black/35"></div>
+    <!-- soft local shade behind the title block only: keeps the gold lines readable, the photo's edges stay bright -->
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 90% 46% at 50% 50%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.46) 50%, rgba(0,0,0,0) 100%);"></div>
 
     <svg class="absolute bottom-6 right-6 w-24 h-32 text-gold/25 hidden sm:block" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.4">
       <path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/>
@@ -490,7 +495,7 @@
     </svg>
 
     <div class="relative h-full w-full flex flex-col items-center justify-center text-center px-6">
-      <p class="reveal text-gold-soft text-sm sm:text-base tracking-widest mb-6 drop-shadow-md">
+      <p class="reveal hero-halo text-gold-soft text-base sm:text-lg tracking-widest mb-6">
         <span class="devnag-plain">आम्रकथा</span> <span class="font-serif italic">— The Real Amra-Katha</span>
       </p>
 
@@ -499,9 +504,9 @@
       </h1>
 
       <div class="reveal flex items-center gap-4 mt-8">
-        <span class="w-10 sm:w-16 h-px bg-gold/70"></span>
-        <p class="font-serif text-gold-soft text-lg sm:text-xl tracking-[0.2em] uppercase">11<span class="lowercase">th</span> March 2027 · Thursday</p>
-        <span class="w-10 sm:w-16 h-px bg-gold/70"></span>
+        <span class="hidden sm:block sm:w-16 h-px bg-gold/70"></span>
+        <p class="font-serif hero-halo lining-nums text-gold-soft text-[length:clamp(12px,4vw,18px)] sm:text-xl tracking-[0.12em] sm:tracking-[0.2em] uppercase">11<span class="lowercase">th</span> March 2027 · Thursday</p>
+        <span class="hidden sm:block sm:w-16 h-px bg-gold/70"></span>
       </div>
 
     </div>
@@ -550,8 +555,8 @@
       <div class="relative flex flex-col md:flex-row items-center gap-10 md:gap-16 mb-24 md:mb-32">
         <div class="reveal w-full md:w-1/2 md:pr-12 md:text-right order-2 md:order-1">
           <div class="flex items-center gap-2 md:justify-end mb-3">
-            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
-            <p class="text-gold text-xs tracking-[0.25em] uppercase">June 2024</p>
+            <svg class="w-4 h-5 text-gold-deep" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold-deep font-medium text-xs tracking-[0.25em] uppercase">June 2024</p>
           </div>
           <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">मैफिलीतली 'सम'</h3>
           <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">मंडळी, तसा हा सगळा योगायोगाचा खेळ! पं. वसंतराव मराठे ऊर्फ आपल्या मराठे दादांची मैफल रंगली होती. तिथे या मुलीचे गाणं आणि आपला हा पठ्ठ्या तबल्याला साथीला. कमाल बघा, त्या दिवशी या दोघांच्यात एकही शब्द दुहेरी झाला नाही. पण गाण्यातली 'सम' आणि दोघांची 'वेव्हलेंग्थ' पहिल्याच फटक्यात अशी काही अचूक जुळली, की पुढच्या 'आम्रकथेची' नांदी तिथेच झाली होती!</p>
@@ -567,8 +572,8 @@
       <div class="relative flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16 mb-24 md:mb-32">
         <div class="reveal w-full md:w-1/2 md:pl-12 order-2">
           <div class="flex items-center gap-2 mb-3">
-            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
-            <p class="text-gold text-xs tracking-[0.25em] uppercase">July 2024</p>
+            <svg class="w-4 h-5 text-gold-deep" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold-deep font-medium text-xs tracking-[0.25em] uppercase">July 2024</p>
           </div>
           <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">इन्स्टाग्राम ते तिलकचा चहा</h3>
           <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">आता जुलै महिन्यात दादांच्या गुरुपौर्णिमेला समीरचा तबला सोलो झाला आणि या आजच्या जमान्यातल्या 'इन्स्टाग्राम'वरून निवेदिताचा मेसेज आला—'Your performance was brilliant'. बस! तिथून जो काही संवादाचा आलाप सुरू झाला... मग विचारता सोय नाही. यांचा वीकली रियाज़ कधी टेकडीवरच्या मॉर्निंग वॉकमध्ये आणि 'तिलकच्या' चहाच्या कपावर रेंगाळू लागला, हे या दोन वेड्या जिवांनाही कळलं नाही.</p>
@@ -586,8 +591,8 @@
 
         <div class="reveal relative z-10 w-full md:w-1/2 md:pr-12 md:text-right order-2 md:order-1">
           <div class="flex items-center gap-2 md:justify-end mb-3">
-            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
-            <p class="text-gold text-xs tracking-[0.25em] uppercase">The Turning Point</p>
+            <svg class="w-4 h-5 text-gold-deep" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold-deep font-medium text-xs tracking-[0.25em] uppercase">The Turning Point</p>
           </div>
           <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">चिपळूणची वारी आणि 'आम्रकथा'</h3>
           <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">खरा टर्निंग पॉईंट आला तो महाशिवरात्रीला. भिले, चिपळूणला निवेदिताच्या घरी समीरचं जाणं झालं आणि तिथे काकांसोबत हापूस आंब्यांवरून रंगलेल्या गप्पांतून चक्क एक भन्नाट आयडिया क्लिक झाली—'आम्रकथा'! आता पुण्यात आंब्याच्या पेट्या पोहोचता-पोहोचता मोडक आणि केतकर या दोन्ही कुटुंबांचं बाँडिंग मात्र एकदम घट्ट होऊन गेलं. आंब्याच्या गोडीने नात्यातही गोडवा आणला म्हणायचा!</p>
@@ -608,8 +613,8 @@
       <div class="relative flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16">
         <div class="reveal w-full md:w-1/2 md:pl-12 order-2">
           <div class="flex items-center gap-2 mb-3">
-            <svg class="w-4 h-5 text-gold" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
-            <p class="text-gold text-xs tracking-[0.25em] uppercase">June 2025</p>
+            <svg class="w-4 h-5 text-gold-deep" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
+            <p class="text-gold-deep font-medium text-xs tracking-[0.25em] uppercase">June 2025</p>
           </div>
           <h3 class="devnag text-2xl md:text-3xl text-forest mb-4">मुक्काम पोस्ट: आम्रबन</h3>
           <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">हळूहळू एकमेकांना भेटण्याची नवी कारणं शोधली जाऊ लागली. कधी रियाज़, तर कधी चक्क हॉस्पिटलच्या वाऱ्या! शेवटी प्रपोजलचा तो दिवस उजाडला आणि जूनमध्ये दोघांच्याही मनातला होकार शब्दांत आलाच. त्यांच्या गुरुबंधूंना याची आधीच चाहूल लागली होती म्हणा. आता पुण्यात जुळलेले हे सूर आणि सुरू झालेली ही 'आम्रकथा', एका सुंदर योगायोगाने थेट 'आम्रबन'मध्ये लग्नाच्या मंडपात पोहोचणार आहे. <br><br> तथास्तु!</p>
@@ -711,7 +716,7 @@
     <svg class="leaf-embossed absolute bottom-[10%] left-[5%] w-11 h-11 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-16deg) scaleX(-1)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
 
     <div class="reveal text-center mb-14 max-w-lg mx-auto">
-      <h2 class="devnag text-4xl md:text-5xl text-forest">मैफिलीची उपस्थिती</h2>
+      <h2 class="devnag text-4xl md:text-5xl text-forest">मैफिलीची हजेरी</h2>
     </div>
 
     <div id="rsvpCard" class="reveal max-w-lg mx-auto glass rounded-2xl shadow-soft p-8 md:p-12">
@@ -722,7 +727,7 @@
           <path pathLength="1" d="M15 2 C25 9,28 24,23 39 C20 50,21 60,15 68 C10 59,8 49,7 38 C5 23,7 9,15 2 Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
           <path pathLength="1" d="M15 7 C18 20,19 39,15 64" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
-        <p class="devnag text-forest text-[22px] md:text-[28px] leading-[1.8]">या मैफिलीसाठी तुमच्या कुटुंबातील सदस्यांची संख्या एकानेच निश्चित कळवायची विनंती आहे.</p>
+        <p class="devnag text-forest text-[22px] md:text-[28px] leading-[1.8]">या मैफिलीची हजेरी घरातील एकानेच लावायची आहे.</p>
         <div class="flex items-center justify-center gap-3 my-5 md:my-6" aria-hidden="true">
           <span class="h-px w-10 bg-gold/50"></span>
           <svg class="w-2.5 h-2.5 text-gold" viewBox="0 0 10 10" fill="currentColor"><path d="M5 0 L10 5 L5 10 L0 5 Z"/></svg>
@@ -889,6 +894,11 @@
         <p class="font-serif text-3xl md:text-4xl tracking-wide text-parchment">Sameer <span class="text-gold italic font-normal">&amp;</span> Nivedita</p>
         <p class="font-serif tracking-wide text-parchment text-base md:text-lg mt-4">Together with the Modak &amp; Ketkar Families</p>
       </div>
+
+      <div class="mt-14">
+        <span class="block w-10 h-px bg-gold/40 mx-auto mb-6"></span>
+        <p class="font-sans text-parchment/55 text-[11px] tracking-[0.12em]">Curated by Nishad Creations</p>
+      </div>
     </div>
   </footer>
 
@@ -1021,16 +1031,34 @@
     let silentWait = false;    // music is running at volume 0 while the server decides
 
     // Tells the RSVP section whether this guest is their family's "primary member"
-    // (the sheet's "Primary member" = Yes). Only the flag from the server's "enter"
-    // answer is used, and anything other than a clear true counts as "no".
-    // Kept for the browser session too, because a guest who is already unlocked
-    // skips the server completely on a reload. Can never block entry.
+    // (the sheet's "Primary member" = Yes). The flag comes from the server's answers
+    // ("hello" on a fresh visit, "enter" at Unlock, and a quiet "hello" again when the
+    // tab is already unlocked - see refreshPrimary below). Anything other than a clear
+    // true counts as "no". Also kept for the browser session, so the card knows what to
+    // show the moment the page opens. Can never block entry.
     function announcePrimary(flag) {
       try {
         window.__amraPrimary = flag;
         safeSet(KEY_PRIMARY, flag ? 'yes' : 'no');
         document.dispatchEvent(new CustomEvent('amrakatha:primary', { detail: flag }));
+        debugFlag('RSVP flag from the server: canRSVP = ' + flag);
       } catch (e) { console.error('[gate] could not pass on the RSVP flag:', e); }
+    }
+
+    // With &debug=1 in the address, a small label at the bottom-left shows what the
+    // server said about the RSVP flag. Guests never see it (no &debug=1, no label).
+    function debugFlag(text) {
+      if (!DEBUG) return;
+      try {
+        let badge = document.getElementById('amraDebugFlag');
+        if (!badge) {
+          badge = document.createElement('div');
+          badge.id = 'amraDebugFlag';
+          badge.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99999;padding:4px 8px;font:11px/1.3 monospace;color:#fff;background:rgba(0,0,0,.75);border-radius:4px;pointer-events:none;max-width:90vw';
+          document.body.appendChild(badge);
+        }
+        badge.textContent = text;
+      } catch (e) { /* debug aid only */ }
     }
 
     // Browser storage can be blocked (private mode etc.) — never let that break the gate.
@@ -1321,6 +1349,7 @@
         try {
           if (data && data.ok === true) {
             lsSet(KEY_CODE, guestCode);
+            announcePrimary(data.canRSVP === true);
             showReady(data.name, data.needWord !== false);
           } else if (data && data.reason === 'code') {
             lsDel(KEY_CODE);
@@ -1366,10 +1395,41 @@
       onPrimaryAction();
     });
 
-    guestCode = readCodeFromUrl() || lsGet(KEY_CODE) || '';
+    // For a guest whose tab is already unlocked (no gate on screen): quietly ask the
+    // server again whether they are a primary member, so the RSVP card follows the
+    // sheet on every visit. Changes nothing in the sheet and never blocks anything;
+    // if the server cannot be reached the card keeps what it already knew.
+    function refreshPrimary() {
+      if (!guestCode) { debugFlag('No saved link code - keeping the remembered RSVP answer'); return; }
+      callServer({ action: 'hello', g: guestCode, d: deviceId }).then(function (data) {
+        try {
+          if (data && data.ok === true) {
+            lsSet(KEY_CODE, guestCode);
+            announcePrimary(data.canRSVP === true);
+          } else if (data && data.reason === 'code') {
+            announcePrimary(false);                 // the link was cancelled or is wrong: no RSVP form
+          } else {
+            debugFlag('Server could not decide (' + ((data && data.reason) || 'no reason') + ') - keeping the remembered RSVP answer');
+          }
+        } catch (err) { console.error('[gate] problem after the server answered:', err); }
+      }, function (err) {
+        console.error('[gate] could not refresh the RSVP flag:', err);
+        debugFlag('Server not reachable - keeping the remembered RSVP answer');
+      });
+    }
+
+    const urlCode = readCodeFromUrl();
+    const storedCode = lsGet(KEY_CODE) || '';
+    guestCode = urlCode || storedCode;
+    // A different guest's link opened in this browser: forget the previous guest's RSVP answer.
+    if (urlCode && urlCode !== storedCode) {
+      try { sessionStorage.removeItem(KEY_PRIMARY); } catch (e) { /* ignore */ }
+    }
     if (!alreadyUnlocked) {
       if (guestCode) showLoading();     // "Please wait" + looping dots while the server is asked
       startGate();
+    } else {
+      refreshPrimary();
     }
 
     // ---------- Audio toggle ----------
