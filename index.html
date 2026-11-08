@@ -257,10 +257,10 @@
   .pass-top { position: absolute; left: 0; top: 0; width: 794px; height: 452px;
     background: radial-gradient(circle at 50% 70%, rgba(78,102,89,0.55) 0%, rgba(30,58,43,0) 62%), linear-gradient(180deg, #2B5240 0%, #1E3A2B 55%, #12241A 100%); }
   .pass-toran { position: absolute; left: 0; top: 0; width: 794px; height: 168px; }
-  .pass-brand { position: absolute; left: 0; top: 164px; width: 794px; text-align: center; }
+  .pass-brand { position: absolute; left: 0; top: 148px; width: 794px; text-align: center; }
   /* ॥ श्री ॥ sits directly under the toran; the tag line below it is Devanagari, so no letter-spacing
      (html2canvas draws spaced text one character at a time, which breaks Devanagari conjuncts). */
-  .pass-shri { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 24px; line-height: 1.4; color: #E5A93C; }
+  .pass-shri { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 19.2px; line-height: 1.4; color: #E5A93C; }
   .pass-tag { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 12px; line-height: 1.5; color: rgba(251,249,244,0.62); }
   .pass-kicker { margin-top: 10px; font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 44px; line-height: 1.35; color: #E5A93C; }
   .pass-names { font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif; font-weight: 500; font-size: 60px; line-height: 1.15; color: #FBF9F4; }
@@ -290,9 +290,10 @@
   .pass-venue { margin-top: var(--pg); }
   .pass-venue-name { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-weight: 500; font-size: var(--pv); line-height: 1.25; color: #1E3A2B; }
   .pass-venue-addr { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 13px; line-height: 1.5; color: #4E6659; margin-top: 3px; }
-  .pass-venue-map { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #B07E23; margin-top: 4px; }
+  .pass-venue-map { display: flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #B07E23; margin-top: 4px; }
+  .pass-venue-pin { width: 14px; height: 14px; flex: none; line-height: 0; }
   .pass-foot { position: absolute; left: 0; bottom: 28px; width: 794px; text-align: center; }
-  .pass-foot-share { white-space: nowrap; font-family: 'PuLaFont', 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 19px; line-height: 1.5; color: #B07E23; }
+  .pass-foot-share { white-space: nowrap; font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; font-size: 19px; line-height: 1.5; color: #B07E23; }
   /* html2canvas measures where each font's baseline sits by dropping a tiny 1x1 GIF next to a
      sample word. Tailwind's reset makes every <img> display:block, which breaks that measurement
      and makes all PDF text land too low. This rule only matches that one probe image. */
@@ -509,7 +510,7 @@
 
       <div class="reveal flex items-center gap-4 mt-8">
         <span class="hidden sm:block sm:w-16 h-px bg-gold/70"></span>
-        <p class="font-serif hero-halo lining-nums text-gold-soft text-[length:clamp(12px,4vw,18px)] sm:text-xl tracking-[0.12em] sm:tracking-[0.2em] uppercase">11 March 2027 · Thursday</p>
+        <p class="font-serif hero-halo lining-nums text-gold-soft text-[length:clamp(12px,4vw,18px)] sm:text-xl tracking-[0.12em] sm:tracking-[0.2em]">11 March 2027 · Thursday</p>
         <span class="hidden sm:block sm:w-16 h-px bg-gold/70"></span>
       </div>
 
@@ -544,7 +545,7 @@
     </div>
 
     <div class="reveal text-left max-w-3xl mx-auto mb-20 md:mb-28">
-      <p class="devnag-plain text-sm italic text-forest-muted mb-8 text-left">(एक छोटीशी नोंद : आम्ही दोघेही 'भाई' अर्थात पु. ल. देशपांडे यांचे निस्सीम चाहते आहोत. आमची कला आणि आमचं जगणं त्यांच्या साहित्याने खूप समृद्ध झाले आहे. म्हणूनच, आमच्या आयुष्यातली ही सर्वात सुंदर गोष्ट त्यांच्याच शैलीत मांडण्याचा हा आमचा एक भावपूर्ण प्रयत्न. यात त्यांचा कोणताही अनादर करण्याचा आमचा हेतू नाही, तर ही त्यांना दिलेली एक छोटीशी आदरांजली आहे.)</p>
+      <p class="devnag-plain text-[17.5px] leading-[25px] text-forest-muted mb-8 text-left">(<span class="underline underline-offset-4">एक छोटीशी नोंद :</span> आम्ही दोघेही 'भाई' अर्थात पु. ल. देशपांडे यांचे निस्सीम चाहते आहोत. आमची कला आणि आमचं जगणं त्यांच्या साहित्याने खूप समृद्ध झाले आहे. म्हणूनच, आमच्या आयुष्यातली ही सर्वात सुंदर गोष्ट त्यांच्याच शैलीत मांडण्याचा हा आमचा एक भावपूर्ण प्रयत्न. यात त्यांचा कोणताही अनादर करण्याचा आमचा हेतू नाही, तर ही त्यांना दिलेली एक छोटीशी आदरांजली आहे.)</p>
       <h2 class="devnag text-4xl md:text-5xl text-forest mb-6">गोष्ट एका आम्रकथेची</h2>
       <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">रसिक हो, सप्रेम नमस्कार!<br><br>
 पुण्यात एखादी सुरेल मैफल रंगलेली असो, आणि तिथे मी—म्हणजे तुमचा 'भाई' (पु. ल.)—हजर नाही, असं कधी होईल का? सदेह नसलो तरी, जिथे सच्चा सूर आणि लयीचा खेळ रंगतो, तिथे मी कुठेतरी रेंगाळत असतोच! पं. वसंतराव मराठ्यांच्या (मराठे दादांच्या) शिष्यांनी आयोजित केलेल्या त्या मैफिलीत जेव्हा या निवेदिताचे 'सूर' आणि समीरच्या तबल्याची 'सम' पहिल्यांदाच एकत्र आली, तेव्हाच माझ्या लक्षात आलं होतं... ही नुसतीच गाण्याची साथ नाही, ही तर जन्मभराची संगत आहे! आता या दोन जिवांनी लग्नाच्या बोहल्यावर चढायचं ठरवलंय. तेव्हा म्हटलं, यांच्या या 'आम्रकथे'ची नांदी माझ्याच शब्दांत करूया.<br><br>
@@ -675,13 +676,13 @@
     <!-- confetti trigger point: IntersectionObserver on #itinerary fires a canvas-confetti blast, see script -->
 
     <div class="reveal text-center mb-16 md:mb-20 max-w-2xl mx-auto">
-      <p class="devnag-plain text-3xl md:text-4xl text-forest mb-3">॥ श्री ॥</p>
+      <p class="devnag-plain relative -top-11 md:-top-[92px] text-[15px] md:text-[18px] leading-9 md:leading-10 text-forest mb-3">॥ श्री ॥</p>
       <h2 class="devnag-plain text-4xl md:text-5xl text-forest">समारंभ</h2>
     </div>
 
     <!-- ---------- Central venue block (single source of truth for both days) ---------- -->
     <div class="reveal text-center max-w-xl mx-auto mb-14 md:mb-16">
-      <p class="text-gold text-[11px] tracking-[0.25em] uppercase mb-2">The Venue</p>
+      <p class="text-gold-deep text-[11px] tracking-[0.25em] uppercase mb-2">The Venue</p>
       <h3 class="devnag-plain text-2xl md:text-3xl text-forest mb-3">आम्रबन रिसॉर्ट</h3>
       <p class="devnag-plain text-forest-muted text-sm leading-relaxed max-w-md mx-auto mb-6">परशुराम बस स्टॉप-परशुराम मंदिर रस्ता, मुंबई-गोवा महामार्ग, चिपळूण जवळ, परशुराम, धामणदेवी, महाराष्ट्र ४१५६०५</p>
       <a href="https://maps.app.goo.gl/RuuHmHBUAErdaWzMA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 text-xs tracking-[0.2em] uppercase border border-gold text-forest hover:bg-gold transition-colors rounded-full px-6 py-3">
@@ -693,7 +694,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-3xl mx-auto">
 
       <div class="reveal glass rounded-2xl shadow-softsm p-8 flex flex-col">
-        <p class="text-gold text-[11px] tracking-[0.25em] uppercase mb-2">Event One</p>
+        <p class="text-gold-deep text-[11px] tracking-[0.25em] uppercase mb-2">Event One</p>
         <h3 class="devnag-plain text-2xl text-forest mb-6">सीमांत पूजन व संगीत</h3>
         <div class="space-y-3 text-sm text-forest-muted">
           <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> 10 March 2027 · time to follow</p>
@@ -701,7 +702,7 @@
       </div>
 
       <div class="reveal glass rounded-2xl shadow-softsm p-8 flex flex-col">
-        <p class="text-gold text-[11px] tracking-[0.25em] uppercase mb-2">Event Two</p>
+        <p class="text-gold-deep text-[11px] tracking-[0.25em] uppercase mb-2">Event Two</p>
         <h3 class="devnag-plain text-2xl text-forest mb-6">विवाह समारंभ</h3>
         <div class="space-y-3 text-sm text-forest-muted">
           <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span>11 March 2027 · <span class="devnag-plain">मुहूर्त:</span> 12.25 pm</span></p>
@@ -883,7 +884,7 @@
       <rect width="100%" height="24" fill="url(#border2)"/>
     </svg>
 
-    <div class="reveal max-w-2xl mx-auto pt-16">
+    <div class="reveal max-w-2xl mx-auto pt-0">
       <blockquote class="devnag italic text-xl md:text-2xl leading-loose text-parchment/90">
         &ldquo;जीवनातल्या सुखदुःखाच्या मैफिलीत योग्य साथ मिळाली, की जगण्याचं गाणं होतं...&rdquo;
       </blockquote>
@@ -2024,7 +2025,7 @@
     const FONT_TESTS = [
       ['500 60px "Playfair Display"', 'Sameer & Nivedita Sangeet Sakharpuda Wedding Ceremony 0123456789'],
       ['44px "Tiro Devanagari Marathi"', 'आम्रकथा सप्रेम निमंत्रण पत्रिका ॥ श्री ॥ मोडक केतकर कुटुंबीय सीमांत पूजन व संगीत विवाह समारंभ मुहूर्त: आम्रबन रिसॉर्ट ४१५६०५'],
-      ['34px PuLaFont', 'तुमची हजेरी नोंदली गेली आहे. मोडक कुटुंबीय केतकर कुटुंबीय'],
+      ['34px PuLaFont', 'तुमची उपस्थिती नोंदली गेली आहे. मोडक कुटुंबीय केतकर कुटुंबीय'],
       ['400 16px "Inter"', 'Guest Joining from Venue 0123456789'],
       ['600 11px "Inter"', 'GUEST JOINING FROM HEADCOUNT']
     ];
@@ -2082,6 +2083,11 @@
       return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 100 16" fill="none" stroke="#E5A93C" stroke-opacity="0.75" stroke-width="1">' +
              '<line x1="0" y1="8" x2="38" y2="8"/><path d="M50 2 C55 2 59 6 59 8 C59 10 55 14 50 14 C45 14 41 10 41 8 C41 6 45 2 50 2 Z"/><line x1="62" y1="8" x2="100" y2="8"/></svg>';
     }
+    // same pin drawing as the website's "View on Map" button; colour is written out because html2canvas draws SVGs as images
+    function pinSvg() {
+      return '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B07E23" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+             '<path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+    }
     function perfSvg() {
       return '<svg xmlns="http://www.w3.org/2000/svg" width="714" height="2" viewBox="0 0 714 2"><line x1="0" y1="1" x2="714" y2="1" stroke="#1E3A2B" stroke-opacity="0.3" stroke-width="2" stroke-dasharray="9 7"/></svg>';
     }
@@ -2107,7 +2113,7 @@
       brand.appendChild(el('div', 'pass-kicker', 'आम्रकथा'));
       brand.appendChild(el('div', 'pass-names', 'Sameer & Nivedita'));
       brand.appendChild(withSvg('pass-rule', ruleSvg(170)));
-      brand.appendChild(el('div', 'pass-confirm', 'तुमची हजेरी नोंदली गेली आहे.'));
+      brand.appendChild(el('div', 'pass-confirm', 'तुमची उपस्थिती नोंदली गेली आहे.'));
       top.appendChild(brand);
       t.appendChild(top);
       t.appendChild(el('div', 'pass-notch l'));
@@ -2159,7 +2165,10 @@
       ven.appendChild(el('div', 'pass-label', 'Venue'));
       ven.appendChild(el('div', 'pass-venue-name', PASS.venue.name));
       ven.appendChild(el('div', 'pass-venue-addr', PASS.venue.address));
-      ven.appendChild(el('div', 'pass-venue-map', 'Tap here for the map →'));
+      const mapLine = el('div', 'pass-venue-map');
+      mapLine.appendChild(withSvg('pass-venue-pin', pinSvg()));
+      mapLine.appendChild(el('span', null, 'Tap here for the map →'));
+      ven.appendChild(mapLine);
       body.appendChild(ven);
       t.appendChild(body);
 
