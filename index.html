@@ -707,7 +707,7 @@
         <p class="text-gold-deep text-[11px] tracking-[0.25em] uppercase mb-2">Event Two</p>
         <h3 class="devnag-plain text-2xl text-forest mb-6">विवाह समारंभ</h3>
         <div class="space-y-3 text-sm text-forest-muted">
-          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span>11 March 2027 · <span class="devnag-plain">मुहूर्त:</span> 12.25 pm</span></p>
+          <p class="flex items-center gap-2"><svg class="w-4 h-4 text-gold shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span>11 March 2027 · <span class="devnag-plain">मुहूर्त -</span> 12.25 pm</span></p>
         </div>
       </div>
 
@@ -1959,7 +1959,7 @@
       family: { 'वरपक्ष': 'मोडक कुटुंबीय', 'वधूपक्ष': 'केतकर कुटुंबीय' },
       events: {
         sangeet: { title: 'सीमांत पूजन व संगीत', when: '10 March 2027 · time to follow' },
-        wedding: { title: 'विवाह समारंभ', when: '11 March 2027 · मुहूर्त: 12.25 pm' }
+        wedding: { title: 'विवाह समारंभ', when: '11 March 2027 · मुहूर्त - 12.25 pm' }
       },
       venue: {
         name: 'आम्रबन रिसॉर्ट',
@@ -2026,7 +2026,7 @@
     // ---------- fonts: make sure every face used by the ticket is really loaded before drawing ----------
     const FONT_TESTS = [
       ['500 60px "Playfair Display"', 'Sameer & Nivedita Sangeet Sakharpuda Wedding Ceremony 0123456789'],
-      ['44px "Tiro Devanagari Marathi"', 'आम्रकथा सप्रेम निमंत्रण पत्रिका ॥ श्री ॥ मोडक केतकर कुटुंबीय सीमांत पूजन व संगीत विवाह समारंभ मुहूर्त: आम्रबन रिसॉर्ट ४१५६०५'],
+      ['44px "Tiro Devanagari Marathi"', 'आम्रकथा सप्रेम निमंत्रण पत्रिका ॥ श्री ॥ मोडक केतकर कुटुंबीय सीमांत पूजन व संगीत विवाह समारंभ मुहूर्त - आम्रबन रिसॉर्ट ४१५६०५'],
       ['34px PuLaFont', 'तुमची उपस्थिती नोंदली गेली आहे. मोडक कुटुंबीय केतकर कुटुंबीय'],
       ['400 16px "Inter"', 'Guest Joining from Venue 0123456789'],
       ['600 11px "Inter"', 'GUEST JOINING FROM HEADCOUNT']
@@ -2154,9 +2154,9 @@
         const txt = el('div');
         txt.appendChild(el('div', 'pass-event-title', PASS.events[k].title));
         const when = el('div', 'pass-event-date');
-        const wp = PASS.events[k].when.split('मुहूर्त:');          // "मुहूर्त:" is drawn in the Marathi face, the rest stays as before
+        const wp = PASS.events[k].when.split('मुहूर्त -');          // "मुहूर्त -" is drawn in the Marathi face, the rest stays as before
         when.appendChild(document.createTextNode(wp[0]));
-        if (wp.length > 1) { when.appendChild(el('span', 'pass-muhurat', 'मुहूर्त:')); when.appendChild(document.createTextNode(wp[1])); }
+        if (wp.length > 1) { when.appendChild(el('span', 'pass-muhurat', 'मुहूर्त -')); when.appendChild(document.createTextNode(wp[1])); }
         txt.appendChild(when);
         card.appendChild(txt);
         evs.appendChild(card);
