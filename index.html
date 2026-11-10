@@ -114,6 +114,25 @@
   /* Traditional printed-book Devanagari (true Tiro), used only for the RSVP heading + the two non-primary-guest notice lines. */
   .devnag-trad { font-family: 'Tiro Devanagari Marathi', 'Noto Sans Devanagari', serif; }
 
+  /* Story heading "गोष्ट एका / आम्रकथेची" on phones up to 391px wide (the widths where PuLaFont already wraps it):
+     a deliberate break after "एका", the second line indented by 1em so the tail of "का" no longer meets the
+     matras of "आम्रकथेची", and a clear gap between the two lines (line height 40px -> 52px).
+     The margins are re-balanced so the space between the note above and the first line stays exactly as it was
+     (-6px = half of the 12px added), and the space below is set so the heading sits evenly between the note above
+     and the text below it. Everything underneath simply moves down with it. Wider screens are not affected. */
+  .story-title-br { display: none; }
+  @media (max-width: 391px) {
+    .story-title-br { display: inline; }
+    .story-title-ind { padding-left: 1em; }
+    h2.story-title { line-height: 52px; margin-top: -6px; margin-bottom: 29px; }
+  }
+
+  /* Story paragraphs on phones (under 640px): 40px line height = 2x the 20px text, the same airy spacing as the
+     closing quote in the footer. Tablets and desktop keep their existing spacing (this rule does not apply there). */
+  @media (max-width: 639px) {
+    #story p.devnag.text-xl { line-height: 40px; }
+  }
+
   /* Gate unlock button — slow continuous "breathing" glow, paused for reduced-motion via the global rule above */
   @keyframes breathe {
     0%, 100% { box-shadow: 0 0 0 0 rgba(229,169,60,0); transform: scale(1); }
@@ -548,7 +567,7 @@
 
     <div class="reveal text-left max-w-3xl mx-auto mb-20 md:mb-28">
       <p class="devnag-plain text-[17.5px] leading-[25px] text-forest-muted mb-8 text-left">(<span class="underline underline-offset-4">एक छोटीशी नोंद :</span> आम्ही दोघेही 'भाई' अर्थात पु. ल. देशपांडे यांचे निस्सीम चाहते आहोत. आमची कला आणि आमचं जगणं त्यांच्या साहित्याने खूप समृद्ध झाले आहे. म्हणूनच, आमच्या आयुष्यातली ही सर्वात सुंदर गोष्ट त्यांच्याच शैलीत मांडण्याचा हा आमचा एक भावपूर्ण प्रयत्न. यात त्यांचा कोणताही अनादर करण्याचा आमचा हेतू नाही, तर ही त्यांना दिलेली एक छोटीशी आदरांजली आहे.)</p>
-      <h2 class="devnag text-4xl md:text-5xl text-forest mb-6">गोष्ट एका आम्रकथेची</h2>
+      <h2 class="devnag story-title text-4xl md:text-5xl text-forest mb-6">गोष्ट एका<br class="story-title-br"> <span class="story-title-ind">आम्रकथेची</span></h2>
       <p class="devnag text-forest-muted leading-relaxed md:leading-loose text-xl md:text-2xl">रसिक हो, सप्रेम नमस्कार!<br><br>
 पुण्यात एखादी सुरेल मैफल रंगलेली असो, आणि तिथे मी—म्हणजे तुमचा 'भाई' (पु. ल.)—हजर नाही, असं कधी होईल का? सदेह नसलो तरी, जिथे सच्चा सूर आणि लयीचा खेळ रंगतो, तिथे मी कुठेतरी रेंगाळत असतोच! पं. वसंतराव मराठ्यांच्या (मराठे दादांच्या) शिष्यांनी आयोजित केलेल्या त्या मैफिलीत जेव्हा या निवेदिताचे 'सूर' आणि समीरच्या तबल्याची 'सम' पहिल्यांदाच एकत्र आली, तेव्हाच माझ्या लक्षात आलं होतं... ही नुसतीच गाण्याची साथ नाही, ही तर जन्मभराची संगत आहे! आता या दोन जिवांनी लग्नाच्या बोहल्यावर चढायचं ठरवलंय. तेव्हा म्हटलं, यांच्या या 'आम्रकथे'ची नांदी माझ्याच शब्दांत करूया.<br><br>
 ऐका तर मग...</p>
