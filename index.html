@@ -178,6 +178,18 @@
   .leaf-embossed {
     filter: drop-shadow(2px 3px 2px rgba(30,58,43,0.30)) drop-shadow(-1px -1px 1px rgba(255,255,255,0.6));
   }
+  /* Phones (under 640px): the same six embossed leaves, shown small and placed in the empty space beside the text and
+     around the cards. m1/m4 sit beside the centred headings (anchored to the page centre so the gap stays the same on
+     every phone width); m2/m3/m5/m6 sit in the padding above/below the cards. Tablets and desktop are unchanged. */
+  @media (max-width: 639px) {
+    #itinerary .leaf-embossed, #rsvp .leaf-embossed { display: block !important; }
+    .leaf-m1 { top: 148px !important; left: calc(50% - 108px) !important; right: auto !important; bottom: auto !important; width: 36px !important; height: 36px !important; }
+    .leaf-m4 { top: 258px !important; left: calc(50% + 84px) !important; right: auto !important; bottom: auto !important; width: 34px !important; height: 34px !important; }
+    .leaf-m2 { bottom: 44px !important; left: 16% !important; top: auto !important; right: auto !important; width: 30px !important; height: 30px !important; }
+    .leaf-m3 { bottom: 36px !important; right: 14% !important; top: auto !important; left: auto !important; width: 42px !important; height: 42px !important; }
+    .leaf-m5 { top: 40px !important; right: 14% !important; left: auto !important; bottom: auto !important; width: 36px !important; height: 36px !important; }
+    .leaf-m6 { bottom: 44px !important; left: 14% !important; top: auto !important; right: auto !important; width: 30px !important; height: 30px !important; }
+  }
 
   /* ---------- Highly detailed tropical leaves, timeline background ---------- */
   .leaf-tropical {
@@ -689,10 +701,10 @@
     <svg class="absolute top-10 right-10 w-20 h-28 text-gold/10 hidden lg:block" viewBox="0 0 100 140" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M50 8 C22 8,10 45,15 76 C20 112,40 133,56 130 C80 126,90 94,83 63 C77 32,66 8,50 8 Z"/></svg>
 
     <!-- clearly visible, embossed green leaves — stamped into the celebrations paper -->
-    <svg class="leaf-embossed absolute top-[16%] left-[4%] w-11 h-11 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(-14deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
-    <svg class="leaf-embossed absolute top-[64%] left-[2%] w-9 h-9 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(22deg)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
-    <svg class="leaf-embossed absolute bottom-[8%] right-[6%] w-14 h-14 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(16deg) scaleX(-1)" viewBox="0 0 80 66" aria-hidden="true"><use href="#leaf-fanpalm"/></svg>
-    <svg class="leaf-embossed absolute top-[36%] right-[3%] w-10 h-10 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-20deg)" viewBox="0 0 70 100" aria-hidden="true"><use href="#leaf-coconut"/></svg>
+    <svg class="leaf-embossed leaf-m1 absolute top-[16%] left-[4%] w-11 h-11 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(-14deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
+    <svg class="leaf-embossed leaf-m2 absolute top-[64%] left-[2%] w-9 h-9 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(22deg)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
+    <svg class="leaf-embossed leaf-m3 absolute bottom-[8%] right-[6%] w-14 h-14 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(16deg) scaleX(-1)" viewBox="0 0 80 66" aria-hidden="true"><use href="#leaf-fanpalm"/></svg>
+    <svg class="leaf-embossed leaf-m4 absolute top-[36%] right-[3%] w-10 h-10 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-20deg)" viewBox="0 0 70 100" aria-hidden="true"><use href="#leaf-coconut"/></svg>
 
     <!-- confetti trigger point: IntersectionObserver on #itinerary fires a canvas-confetti blast, see script -->
 
@@ -735,8 +747,8 @@
 
   <!-- ---------- RSVP ---------- -->
   <section id="rsvp" class="relative py-28 md:py-40 px-6 md:px-12 overflow-hidden">
-    <svg class="leaf-embossed absolute top-[8%] right-[7%] w-12 h-12 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(20deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
-    <svg class="leaf-embossed absolute bottom-[10%] left-[5%] w-11 h-11 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-16deg) scaleX(-1)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
+    <svg class="leaf-embossed leaf-m5 absolute top-[8%] right-[7%] w-12 h-12 text-forest-muted/75 hidden sm:block pointer-events-none" style="transform:rotate(20deg)" viewBox="0 0 50 90" aria-hidden="true"><use href="#leaf-banana"/></svg>
+    <svg class="leaf-embossed leaf-m6 absolute bottom-[10%] left-[5%] w-11 h-11 text-forest-muted/70 hidden md:block pointer-events-none" style="transform:rotate(-16deg) scaleX(-1)" viewBox="0 0 100 140" aria-hidden="true"><use href="#leaf-mango"/></svg>
 
     <div class="reveal text-center mb-14 max-w-lg mx-auto">
       <h2 class="devnag-trad text-4xl md:text-5xl text-forest">मैफिलीची उपस्थिती</h2>
