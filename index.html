@@ -543,7 +543,7 @@
 
     <!-- highly detailed, embossed tropical botanical background -->
     <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      <svg class="leaf-tropical absolute" style="top:30%; right:4%; width:150px; height:150px; color:#1E3A2B; opacity:0.9; transform: scaleX(-1) scale(1.05) rotate(-18deg);" viewBox="0 0 66 192"><use href="#tropical-banana"/></svg>
+      <svg class="leaf-tropical absolute hidden sm:block" style="top:30%; right:4%; width:150px; height:150px; color:#1E3A2B; opacity:0.9; transform: scaleX(-1) scale(1.05) rotate(-18deg);" viewBox="0 0 66 192"><use href="#tropical-banana"/></svg>
     </div>
 
     <div class="reveal text-left max-w-3xl mx-auto mb-20 md:mb-28">
@@ -1034,7 +1034,8 @@
     let needWord = true;       // does this device have to type the gate word?
     let ready = false;         // true once the server has recognised the link
     let retryMode = false;     // the button currently reads "Try again"
-    let silentWait = false;    // music is running at volume 0 while the server decides
+    let silentWait = false;    // music is running muted while the server decides
+    const MUSIC_START_DELAY_MS = 1700;   // the moment the invitation starts to appear (same delay as unlockGate, stage 2)
 
     // Tells the RSVP section whether this guest is their family's "primary member"
     // (the sheet's "Primary member" = Yes). The flag comes from the server's answers
@@ -1260,34 +1261,48 @@
     // ----- music -----
     // Browsers only allow sound to start from a tap, and the answer from the
     // server arrives a moment later. So the music is started inside the tap
-    // itself (silently where the device lets us), then either raised from the
-    // beginning once the server says yes, or stopped if it says no.
+    // itself, but MUTED: every phone and computer honours "muted", whereas
+    // iPhones ignore "volume" (the old volume-0 trick played out loud there).
+    // Once the server says yes it is unmuted and rewound ONCE, at the moment
+    // the invitation appears; if the server says no it is stopped.
     function startMusicInTap() {
       if (!bgMusic) return;
       try {
-        try { bgMusic.volume = 0; } catch (e) { /* some phones ignore volume */ }
-        silentWait = (bgMusic.volume === 0);
+        bgMusic.muted = true;
+        silentWait = true;
         const p = bgMusic.play();
         if (p && p.catch) p.catch(function () {});
       } catch (e) {
         console.error('[gate] music problem:', e);     // music must never block entry
       }
     }
+    // Safety net: if the phone refuses sound outside a tap, stay muted and let the speaker
+    // button say so honestly; one tap on it then starts the music.
+    function speakerShowsMuted() {
+      try {
+        bgMusic.muted = true;
+        iconOn.classList.add('hidden');
+        iconOff.classList.remove('hidden');
+        audioBtn.setAttribute('aria-pressed', 'false');
+        audioBtn.setAttribute('aria-label', 'Unmute background music');
+      } catch (e) { /* ignore */ }
+    }
     function raiseMusic() {
       if (!bgMusic) return;
       if (silentWait) {
         try { bgMusic.currentTime = 0; } catch (e) { /* ignore */ }
-        try { bgMusic.volume = 1; } catch (e) { /* ignore */ }
+        try { bgMusic.muted = false; } catch (e) { /* ignore */ }
       }
       silentWait = false;
       const p = bgMusic.play();                      // harmless if it is already playing
-      if (p && p.catch) p.catch(function () {});
+      if (p && p.catch) p.catch(speakerShowsMuted);
+      setTimeout(function () { if (bgMusic.paused) speakerShowsMuted(); }, 600);
     }
     function stopMusic() {
       if (!bgMusic) return;
       try { bgMusic.pause(); } catch (e) { /* ignore */ }
       try { bgMusic.currentTime = 0; } catch (e) { /* ignore */ }
-      try { bgMusic.volume = 1; } catch (e) { /* ignore */ }
+      try { bgMusic.muted = false; } catch (e) { /* ignore */ }
       silentWait = false;
     }
 
@@ -1342,7 +1357,9 @@
           button.disabled = false;
           button.innerHTML = UNLOCK_BTN_HTML;
           unlockGate(false);
-          try { raiseMusic(); } catch (e) { console.error('[gate] music problem:', e); }   // music must never block entry
+          setTimeout(function () {                    // when the invitation starts to appear, not when the server answers
+            try { raiseMusic(); } catch (e) { console.error('[gate] music problem:', e); }   // music must never block entry
+          }, MUSIC_START_DELAY_MS);
         } else {
           stopMusic();
           handleDenied(data && data.reason);
@@ -1459,6 +1476,7 @@
       audioBtn.addEventListener('click', function () {
         bgMusic.muted = !bgMusic.muted;
         const muted = bgMusic.muted;
+        if (!muted) { const q = bgMusic.play(); if (q && q.catch) q.catch(function () {}); }   // no-op if already playing
         iconOn.classList.toggle('hidden', muted);
         iconOff.classList.toggle('hidden', !muted);
         audioBtn.setAttribute('aria-pressed', String(!muted));
